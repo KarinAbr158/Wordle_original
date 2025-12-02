@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class LogInActivity extends AppCompatActivity {
     EditText usernameFieldInput, passwordFieldInput;
-    Button signup, login;
+    Button signup, login, homepage;
     SharedPreferences prefs;
     Intent i;
     @Override
@@ -28,6 +28,7 @@ public class LogInActivity extends AppCompatActivity {
         passwordFieldInput = findViewById(R.id.passwordET);
         signup = findViewById(R.id.signupBtn);
         login = findViewById(R.id.loginBtn);
+        homepage = findViewById(R.id.cheatBtn);
 
         prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -38,6 +39,14 @@ public class LogInActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 i = new Intent(LogInActivity.this, SignUpActivity.class);
+                startActivity(i);
+            }
+        });
+
+        homepage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                i = new Intent(LogInActivity.this, HomePageActivity.class);
                 startActivity(i);
             }
         });
