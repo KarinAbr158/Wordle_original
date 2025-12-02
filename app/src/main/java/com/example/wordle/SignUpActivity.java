@@ -11,9 +11,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class SignUpActivity extends AppCompatActivity {
     EditText newUsername, newPassword, passwordConf;
@@ -43,7 +40,7 @@ public class SignUpActivity extends AppCompatActivity {
                         editor.putString(newUsername.getText().toString(), newPassword.getText().toString());
                         editor.apply();
                         //returns to the login page in order to log in
-                        Intent i = new Intent(SignUpActivity.this, MainActivity.class);
+                        Intent i = new Intent(SignUpActivity.this, LogInActivity.class);
                         startActivity(i);
                     }
                     else{

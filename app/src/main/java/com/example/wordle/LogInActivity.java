@@ -11,11 +11,8 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-public class MainActivity extends AppCompatActivity {
+public class LogInActivity extends AppCompatActivity {
     EditText usernameFieldInput, passwordFieldInput;
     Button signup, login;
     SharedPreferences prefs;
@@ -24,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_log_in);
         Log.v("MainActivity", "started onCreate");
         usernameFieldInput = findViewById(R.id.usernameET);
         passwordFieldInput = findViewById(R.id.passwordET);
@@ -34,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                i = new Intent(MainActivity.this, SignUpActivity.class);
+                i = new Intent(LogInActivity.this, SignUpActivity.class);
                 startActivity(i);
             }
         });
@@ -50,19 +47,19 @@ public class MainActivity extends AppCompatActivity {
                 String storedPass = prefs.getString(usernameFieldInput.getText().toString(), null);
                 if (storedPass != null && storedPass.equals(passwordFieldInput.getText().toString())) {
                     //if the login was a success, as in given data matches stored data, then:
-                    i = new Intent(MainActivity.this, HomePageActivity.class);
+                    i = new Intent(LogInActivity.this, HomePageActivity.class);
                     startActivity(i);
                 }
                 else if(storedPass != null && !storedPass.equals(passwordFieldInput.getText().toString())) {
                     //if the username exists, but given password doesn't match said username's respective password then:
-                    Toast.makeText(MainActivity.this, "Wrong password, please try again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LogInActivity.this, "Wrong password, please try again", Toast.LENGTH_SHORT).show();
                 }
                 else if(storedPass == null){
                     //if given username doesn't exist in the database then:
-                    Toast.makeText(MainActivity.this,
+                    Toast.makeText(LogInActivity.this,
                             "Username not found. If you have an account, please try again",
                             Toast.LENGTH_SHORT).show();
-                    Toast.makeText(MainActivity.this,
+                    Toast.makeText(LogInActivity.this,
                             "If not, create a new account in Sign up",
                             Toast.LENGTH_SHORT).show();
                 }

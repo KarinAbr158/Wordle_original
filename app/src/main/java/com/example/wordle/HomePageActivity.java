@@ -33,7 +33,7 @@ public class HomePageActivity extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                i = new Intent(HomePageActivity.this, MainActivity.class);
+                i = new Intent(HomePageActivity.this, LogInActivity.class);
                 startActivity(i);
             }
         });
