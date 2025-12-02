@@ -22,11 +22,17 @@ public class LogInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_log_in);
-        Log.v("MainActivity", "started onCreate");
+        Log.v("LogInActivity", "started onCreate");
+
         usernameFieldInput = findViewById(R.id.usernameET);
         passwordFieldInput = findViewById(R.id.passwordET);
         signup = findViewById(R.id.signupBtn);
         login = findViewById(R.id.loginBtn);
+
+        prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(usernameFieldInput.getText().toString(), passwordFieldInput.getText().toString());
+        editor.apply();
 
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,11 +41,6 @@ public class LogInActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
-        prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(usernameFieldInput.getText().toString(), passwordFieldInput.getText().toString());
-        editor.apply();
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,5 +66,9 @@ public class LogInActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void LoginFunc(SharedPreferences prefs){
+
     }
 }
