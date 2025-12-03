@@ -76,8 +76,4 @@ public class LogInActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void LoginFunc(SharedPreferences prefs){
-
-    }
 }
