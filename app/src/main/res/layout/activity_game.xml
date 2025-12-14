@@ -409,16 +409,16 @@
         app:layout_constraintStart_toEndOf="@id/cell_6_4"
         app:layout_constraintTop_toBottomOf="@+id/cell_5_5" />
 
-    <androidx.gridlayout.widget.GridLayout
+    <GridLayout
         android:id="@+id/keyboardlayout"
-        android:layout_width="383dp"
-        android:layout_height="282dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cell_6_3">
 
-    </androidx.gridlayout.widget.GridLayout>
+    </GridLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

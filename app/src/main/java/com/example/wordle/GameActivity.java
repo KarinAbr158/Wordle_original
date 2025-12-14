@@ -16,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class GameActivity extends AppCompatActivity {
 
-    TableLayout keyboard;
+    GridLayout keyboard;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,14 +46,11 @@ public class GameActivity extends AppCompatActivity {
             key.setAllCaps(true);
             key.setTextSize(18);
 
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams(); //parameters for the keyboard
-            params.rowSpec = GridLayout.spec(rowIndex); //This tells the GridLayout which row the Button goes into.
-            params.columnSpec = GridLayout.spec(i); //This tells the GridLayout which column the Button goes into. i is the zero-based column index within that row.
-            params.setMargins(6, 6, 6, 6);
-
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.rowSpec = GridLayout.spec(rowIndex);
+            params.columnSpec = GridLayout.spec(i);
+            params.setMargins(4, 4, 4, 4); // Adjust if needed
             key.setLayoutParams(params);
-            key.setBackgroundResource(android.R.drawable.btn_default); // replace if needed
-
             keyboard.addView(key);
         }
     }
