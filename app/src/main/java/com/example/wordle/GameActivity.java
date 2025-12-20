@@ -34,7 +34,7 @@ public class GameActivity extends AppCompatActivity {
 
         addKeys(row1, new String[]{"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"});
         addKeys(row2, new String[]{"A", "S", "D", "F", "G", "H", "J", "K", "L"});
-        addKeys(row3, new String[]{"ENTER", "Z", "X", "C", "V", "B", "N", "M", "⌫"});
+        addKeys(row3, new String[]{"⏎", "Z", "X", "C", "V", "B", "N", "M", "⌫"});
     }
 
     private void addKeys(LinearLayout row, String[] keys) {
@@ -45,18 +45,24 @@ public class GameActivity extends AppCompatActivity {
             Button b = new Button(this);
             b.setText(text);
             b.setAllCaps(true);
+            b.setTextSize(18);
 
             LinearLayout.LayoutParams p =
-                    new LinearLayout.LayoutParams(0,
-                            LinearLayout.LayoutParams.WRAP_CONTENT);
+                    new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-            if (text.equals("ENTER") || text.equals("⌫")) {
-                p.weight = 2;
-            } else {
-                p.weight = 1;
+            if(text.equals("⏎") || text.equals("⌫")) {
+                p.weight = 4;
+            }
+            else{
+                p.weight = 3;
             }
 
-            p.setMargins(4, 4, 4, 4);
+            if(text.equals("⏎") || text.equals("⌫")){
+                p.setMargins(0, 4, 0, 4);
+            }
+            else{
+                p.setMargins(1, 4, 1, 4);
+            }
             b.setLayoutParams(p);
 
             row.addView(b);
