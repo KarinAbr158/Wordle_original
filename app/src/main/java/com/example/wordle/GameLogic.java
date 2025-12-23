@@ -110,7 +110,7 @@ public class GameLogic {
         else{
             int oldColor = keyColors.get(letter);
             if (oldColor == GREEN) return;
-            if (oldColor == YELLOW || color == GRAY) return;
+            if (oldColor == YELLOW && color == GRAY) return;
             keyColors.put(letter, color);
         }
         LinearLayout[] rows = {row1, row2, row3};
@@ -118,7 +118,7 @@ public class GameLogic {
         for(LinearLayout row:rows){
             for(int i = 0; i < row.getChildCount(); i++){
                 Button b = (Button)row.getChildAt(i);
-                if(b.getText().length() == 1 && b.getText().equals(letter)){
+                if (b.getText().length() == 1 && b.getText().charAt(0) == letter){
                     b.setBackgroundColor(color);
                     b.setTextColor(0xFFFFFFFF);//White so you see it better against the dark background
                 }
