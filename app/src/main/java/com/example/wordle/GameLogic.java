@@ -4,13 +4,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 
 public class GameLogic {
-    private TextView[][] cells;       // Wordle grid
-    private LinearLayout row1, row2, row3;  // Keyboard rows
+    private TextView[][] cells;
+    private LinearLayout row1, row2, row3;
     private HashMap<Character, Integer> keyColors = new HashMap<>();
 
     private int currentRow = 0;
@@ -67,8 +66,7 @@ public class GameLogic {
 
     private void checkGuess(String guess){
         boolean[] used = new boolean[5];
-
-        // Step 1: Green letters
+        //Green letters
         for(int i = 0; i < 5; i++){
             if(guess.charAt(i) == secretWord.charAt(i)){
                 cells[currentRow][i].setBackgroundColor(GREEN);
@@ -76,12 +74,11 @@ public class GameLogic {
                 used[i] = true;
             }
         }
-        // Step 2: Yellow / Gray letters
+        //Yellow/Gray letters
         for(int i = 0; i < 5; i++){
             int currentColor = ((ColorDrawable)cells[currentRow][i].getBackground()).getColor();
-
             if(currentColor == GREEN){
-                // already green, skip
+                //already green, skip
             }
             else{
                 boolean found = false;
@@ -106,9 +103,8 @@ public class GameLogic {
 
     private void colorKey(char letter, int color) {
         letter = Character.toUpperCase(letter);
-
-        // priority: GREEN > YELLOW > GRAY
-        if (!keyColors.containsKey(letter)) {
+        //GREEN > YELLOW > GRAY
+        if(!keyColors.containsKey(letter)){
             keyColors.put(letter, color);
         }
         else{
@@ -117,21 +113,20 @@ public class GameLogic {
             if (oldColor == YELLOW || color == GRAY) return;
             keyColors.put(letter, color);
         }
-
         LinearLayout[] rows = {row1, row2, row3};
 
-        for (LinearLayout row : rows) {
-            for (int i = 0; i < row.getChildCount(); i++) {
-                Button b = (Button) row.getChildAt(i);
-                if (b.getText().length() == 1 && b.getText().charAt(0) == letter) {
+        for(LinearLayout row:rows){
+            for(int i = 0; i < row.getChildCount(); i++){
+                Button b = (Button)row.getChildAt(i);
+                if(b.getText().length() == 1 && b.getText().equals(letter)){
                     b.setBackgroundColor(color);
-                    b.setTextColor(0xFFFFFFFF);
+                    b.setTextColor(0xFFFFFFFF);//White so you see it better against the dark background
                 }
             }
         }
     }
 
-        public boolean isGameOver(){
-            return gameOver;
-        }
+    public boolean isGameOver(){
+        return gameOver;
+    }
 }
