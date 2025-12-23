@@ -21,11 +21,8 @@ import androidx.core.view.WindowInsetsCompat;
 public class GameActivity extends AppCompatActivity {
 
     LinearLayout row1, row2, row3;
-    TextView[][] cells = new TextView[6][5];
-    int currentRow = 0;
-    int currentCol = 0;
-    String secretWord = "APPLE"; // hardcoded on purpose
-    boolean gameOver = false;
+    TextView[][] cells = new TextView[6][5]; // initialized with initGrid()
+    GameLogic wordle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +36,7 @@ public class GameActivity extends AppCompatActivity {
         row3 = findViewById(R.id.row3);
 
         wordGrid();
+        wordle = new GameLogic(cells, row1, row2, row3, "APPLE");
 
         addKeys(row1, new String[]{"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"});
         addKeys(row2, new String[]{"A", "S", "D", "F", "G", "H", "J", "K", "L"});
@@ -103,99 +101,11 @@ public class GameActivity extends AppCompatActivity {
 
     private void handleKeyPress(String key) {
         if (key.equals("ENTER")) {
-            submitWord();
+            wordle.submitWord();
         } else if (key.equals("DEL")) {
-            deleteLetter();
+            wordle.deleteLetter();
         } else {
-            addLetter(key);
-        }
-    }
-
-    private void addLetter(String letter) {
-        if (gameOver) return;
-
-        if (currentCol < 5) {
-            cells[currentRow][currentCol].setText(letter);
-            currentCol++;
-        }
-    }
-
-    private void deleteLetter() {
-        if (gameOver) return;
-
-        if (currentCol > 0) {
-            currentCol--;
-            cells[currentRow][currentCol].setText("");
-        }
-    }
-
-    private void submitWord() {
-        if (gameOver) return;
-        if (currentCol < 5) return;
-
-        String guess = "";
-
-        for (int i = 0; i < 5; i++) {
-            guess += cells[currentRow][i].getText().toString();
-        }
-
-        checkGuess(guess);
-
-        if (guess.equals(secretWord)) {
-            gameOver = true;
-            return;
-        }
-
-        currentRow++;
-        currentCol = 0;
-
-        if (currentRow == 6) {
-            gameOver = true;
-        }
-    }
-
-    private void checkGuess(String guess) {
-        String[] brknGuess = new String[5];
-        String[] brknAns = new String[5];
-        boolean[] used = new boolean[5];
-        int GREEN = 0xFF6AAA64, YELL = 0xFFC9B458, GRAY = 0xFF787C7E;
-        for (int i = 0; i < brknGuess.length; i++) {
-            brknGuess[i] = guess.substring(i, (i + 1));
-            brknAns[i] = secretWord.substring(i, (i + 1));
-        }
-        //if the letter is correct, the next loop colours the letter green on the guessing grid and on the keyboard
-        for (int i = 0; i < 5; i++) {
-            boolean yesnt = false;
-            if (brknGuess[i].equals(brknAns[i])) {
-                cells[currentRow][i].setBackgroundColor(GREEN);
-                colorKey(guess.charAt(i), GREEN);
-                used[i] = true;
-            }
-
-            for (int j = 0; j < 5; j++) {
-                int currentColor = ((ColorDrawable) cells[currentRow][i].getBackground()).getColor();
-
-                if (currentColor == GREEN) {
-                    // do nothing, already colored
-                } else {
-                    boolean found = false;
-                    for (int j = 0; j < 5; j++) {
-                        if (!used[j] && guess.charAt(i) == secretWord.charAt(j)) {
-                            found = true;
-                            used[j] = true; // mark as used
-                            break;
-                        }
-                    }
-
-                    if (found) {
-                        cells[currentRow][i].setBackgroundColor(YELL);
-                        colorKey(guess.charAt(i), YELL);
-                    } else {
-                        cells[currentRow][i].setBackgroundColor(GRAY);
-                        colorKey(guess.charAt(i), GRAY);
-                    }
-                }
-            }
+            wordle.addLetter(key);
         }
     }
 }
