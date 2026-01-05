@@ -4,10 +4,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.content.Context;
+import android.widget.Toast;
 
 import java.util.HashMap;
 
 public class GameLogic {
+    private Context context;
     private TextView[][] cells;
     private LinearLayout row1, row2, row3;
     private HashMap<Character, Integer> keyColors = new HashMap<>();
@@ -16,17 +19,26 @@ public class GameLogic {
     private int currentCol = 0;
     private boolean gameOver = false;
     private String secretWord;
+    private String[] allWordsPossible;
+    /*private int maxStreak;
+    private int currStreak;
+    private int gamesPlayedCnt;
+    private int winPercentages;*/
 
     private final int GREEN = 0xFF6AAA64;
     private final int YELLOW = 0xFFC9B458;
     private final int GRAY = 0xFF787C7E;
 
-    public GameLogic(TextView[][] cells, LinearLayout row1, LinearLayout row2, LinearLayout row3, String secretWord) {
+    public GameLogic(Context context, TextView[][] cells,
+                     LinearLayout row1, LinearLayout row2, LinearLayout row3,
+                     String secretWord, String[] allWords) {
+        this.context = context;
         this.cells = cells;
         this.row1 = row1;
         this.row2 = row2;
         this.row3 = row3;
         this.secretWord = secretWord;
+        this.allWordsPossible = allWords;
     }
 
     public void addLetter(String letter){
@@ -45,6 +57,15 @@ public class GameLogic {
         }
     }
 
+    public boolean isInArray(String guess){
+        for(int i = 0; i < this.allWordsPossible.length; i++){
+            if(this.allWordsPossible[i].equals(guess)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void submitWord(){
         if(gameOver) return;
         if(currentCol < 5) return;
@@ -53,14 +74,26 @@ public class GameLogic {
         for(int i = 0; i < 5; i++){
             guess += (cells[currentRow][i].getText().toString());
         }
-        guess.toUpperCase();
-        checkGuess(guess);
+        guess = guess.toUpperCase();
+        if(isInArray(guess)) {
+            checkGuess(guess);
 
-        if(guess.equals(secretWord)) gameOver = true;
-        if(currentRow == 6) gameOver = true;
+            // בדיקת סיום משחק (עושים את זה רק אם המילה הייתה חוקית)
+            if(guess.equals(secretWord)) {
+                gameOver = true;
+                Toast.makeText(context, "Splendid!", Toast.LENGTH_SHORT).show();
+            } else if(currentRow == 5) { // שים לב: בדרך כלל 6 שורות זה אינדקס 0 עד 5
+                gameOver = true;
+                Toast.makeText(context, "Game Over! The word was: " + secretWord, Toast.LENGTH_LONG).show();
+            } else {
+                currentRow++;
+                currentCol = 0;
+            }
+        }
         else{
-            currentRow++;
-            currentCol = 0;
+            // כאן נכנס הקוד שלך לטיפול במילה לא חוקית
+            Toast.makeText(context, "Not in word list", Toast.LENGTH_SHORT).show();
+            // הערה: אנחנו לא מקדמים את השורה (currentRow++) כדי שהמשתמש יוכל לתקן
         }
     }
 

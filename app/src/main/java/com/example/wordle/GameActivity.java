@@ -29,7 +29,6 @@ public class GameActivity extends AppCompatActivity {
     LinearLayout row1, row2, row3;
     TextView[][] cells = new TextView[6][5];
     GameLogic wordle;
-    List<String> possibleWords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +41,11 @@ public class GameActivity extends AppCompatActivity {
         row2 = findViewById(R.id.row2);
         row3 = findViewById(R.id.row3);
 
+        String[] allWords = getResources().getStringArray(R.array.wordle_answers);
+        String randomWord = allWords[new java.util.Random().nextInt(allWords.length)];
+
         wordGrid();
-        wordle = new GameLogic(cells, row1, row2, row3, "APPLE");
+        wordle = new GameLogic(GameActivity.this, cells, row1, row2, row3, randomWord, allWords);
 
         addKeys(row1, new String[]{"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"});
         addKeys(row2, new String[]{"A", "S", "D", "F", "G", "H", "J", "K", "L"});
@@ -79,7 +81,6 @@ public class GameActivity extends AppCompatActivity {
 
             if(text.equals("⏎") ){
                 p.weight = 4;
-                b.setEnabled(false);
             }
             else if(text.equals("⌫")){
                 p.weight = 4;
