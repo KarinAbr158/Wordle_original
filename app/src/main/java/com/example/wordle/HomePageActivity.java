@@ -79,7 +79,7 @@ public class HomePageActivity extends AppCompatActivity {
             startGame.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //Only clear if isn't wloading!
+                    //Only clear if isn't loading
                     //remove the word so GameActivity picks a new one
                     prefs.edit().remove("secret_word").apply();
 
