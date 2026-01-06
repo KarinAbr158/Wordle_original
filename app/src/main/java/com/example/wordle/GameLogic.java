@@ -1,5 +1,6 @@
 package com.example.wordle;
 
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -84,10 +85,7 @@ public class GameLogic {
     }
 
     public void submitWord(){
-        if(gameOver){
-            context.getSharedPreferences("GuessPrefs", Context.MODE_PRIVATE).edit().clear().apply();
-            return;
-        }
+        if(gameOver) return;
         if(currentCol < 5) return;
 
         String guess = "";
@@ -99,13 +97,14 @@ public class GameLogic {
             this.savedGuess[this.currentRow] = guess;
             checkGuess(guess);
 
-            // בדיקת סיום משחק (עושים את זה רק אם המילה הייתה חוקית)
             if(guess.equals(secretWord)) {
                 gameOver = true;
                 Toast.makeText(context, "Splendid!", Toast.LENGTH_SHORT).show();
-            } else if(currentRow == 5) { // שים לב: בדרך כלל 6 שורות זה אינדקס 0 עד 5
+                handleGameEnd(); // Clear specific keys
+            } else if(currentRow == 5) {
                 gameOver = true;
                 Toast.makeText(context, "Game Over! The word was: " + secretWord, Toast.LENGTH_LONG).show();
+                handleGameEnd(); // Clear specific keys
             } else {
                 currentRow++;
                 currentCol = 0;
@@ -113,9 +112,24 @@ public class GameLogic {
         }
         else{
             Toast.makeText(context, "Not in word list", Toast.LENGTH_SHORT).show();
-            // הערה: אנחנו לא מקדמים את השורה (currentRow++) כדי שהמשתמש יוכל לתקן
         }
     }
+
+    private void handleGameEnd() {
+        //get the specific preferences file
+        SharedPreferences prefs = context.getSharedPreferences("GuessPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        //only remove the things that allow a game to be "Loaded"
+        editor.remove("secret_word");
+        for (int i = 1; i <= 6; i++) {
+            editor.remove("guess_" + i);
+        }
+        //doesn't clear everything, because it's needs to save "last_played_date"
+        //for the 24-hour mode check in HomePageActivity.
+        editor.apply();
+    }
+
 
     private void checkGuess(String guess){
         boolean[] used = new boolean[5];
@@ -180,7 +194,7 @@ public class GameLogic {
     }
 
     public void restoreRow(int row, String word) {
-        // 1. Put the letters back into the grid
+        //Put the letters back into the grid
         for (int i = 0; i < 5; i++) {
             cells[row][i].setText(String.valueOf(word.charAt(i)));
         }
@@ -193,7 +207,7 @@ public class GameLogic {
         this.currentRow = row + 1;
         this.currentCol = 0;
 
-        // 3. Save the word to your internal array so it can be re-saved if needed
+        //save the word to internal array so it can be re-saved if needed
         this.savedGuess[row] = word;
     }
 

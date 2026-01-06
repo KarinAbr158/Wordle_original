@@ -23,6 +23,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity {
@@ -47,7 +48,7 @@ public class GameActivity extends AppCompatActivity {
         editor = prefs.edit();
 
         gameMode = prefs.getInt("game_mode", 0);
-        currentDate = new java.text.SimpleDateFormat("yyyy-MM-dd",
+        currentDate = new SimpleDateFormat("yyyy-MM-dd",
                 java.util.Locale.getDefault()).format(new java.util.Date());
         lastSavedDate = prefs.getString("last_played_date", "");
 
@@ -60,8 +61,8 @@ public class GameActivity extends AppCompatActivity {
             }
         }
         else{
-            // In this mode, we only generate a new word if the old game was finished
-            // (This is handled by the "Start Game" button clearing the prefs)
+            //In this mode it only generates a new word if the old game was finished
+            //handled by the "Start Game" button clearing the prefs
             if (randomWord == null) {
                 shouldReset = true;
             }

@@ -1,6 +1,7 @@
 package com.example.wordle;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import java.text.SimpleDateFormat;
 
 public class HomePageActivity extends AppCompatActivity {
 
@@ -38,38 +41,54 @@ public class HomePageActivity extends AppCompatActivity {
             }
         });
 
-        // Initialize SharedPreferences to check for existing games
-        android.content.SharedPreferences prefs = getSharedPreferences("GuessPrefs", MODE_PRIVATE);
-        boolean hasSavedGame = prefs.getString("secret_word", null) != null;
+        SharedPreferences prefs = getSharedPreferences("GuessPrefs", MODE_PRIVATE);
+        //Check if an ongoing game exists
+        boolean hasOngoingGame = prefs.getString("secret_word", null) != null;
+        //Check 24-hour mode status
+        int gameMode = prefs.getInt("game_mode", 0); //0 = every new game, 1 = 24h
+        String currentDate = new SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault()).format(new java.util.Date());
+        String lastPlayedDate = prefs.getString("last_played_date", "");
+        boolean alreadyPlayedToday = currentDate.equals(lastPlayedDate);
 
-        // LOAD GAME BUTTON
-        // Disable the button visually if no game is found
-        if (!hasSavedGame) {
+        // LOAD GAME BUTTON LOGIC
+        if (!hasOngoingGame) {
             loadGame.setEnabled(false);
-            loadGame.setAlpha(0.5f); // Make it look faded
+            loadGame.setAlpha(0.3f);
+        } else {
+            loadGame.setEnabled(true);
+            loadGame.setAlpha(1.0f);
+            loadGame.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    i = new Intent(HomePageActivity.this, GameActivity.class);
+                    startActivity(i);
+                }
+            });
         }
 
-        loadGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Just start the activity; the GameActivity logic we wrote
-                // earlier will handle loading the saved guesses.
-                i = new Intent(HomePageActivity.this, GameActivity.class);
-                startActivity(i);
-            }
-        });
+        // START GAME BUTTON LOGIC
+        //Disabled if: 24h mode AND played today AND no game is currently in progress
+        if (gameMode == 1 && alreadyPlayedToday && !hasOngoingGame) {
+            startGame.setEnabled(false);
+            startGame.setAlpha(0.3f);
+            startGame.setText("Next Word Tomorrow");
+        } else {
+            startGame.setEnabled(true);
+            startGame.setAlpha(1.0f);
+            startGame.setText("Start New Game");
+            startGame.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // IMPORTANT: Only clear if we aren't loading!
+                    // We remove the word so GameActivity picks a new one
+                    prefs.edit().remove("secret_word").apply();
 
-        // START GAME BUTTON
-        startGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // To start a BRAND NEW game, we must clear the old data first
-                prefs.edit().clear().apply();
+                    i = new Intent(HomePageActivity.this, GameActivity.class);
+                    startActivity(i);
+                }
+            });
+        }
 
-                i = new Intent(HomePageActivity.this, GameActivity.class);
-                startActivity(i);
-            }
-        });
 
 
         settings.setOnClickListener(new View.OnClickListener() {
