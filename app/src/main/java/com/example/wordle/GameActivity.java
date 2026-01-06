@@ -169,7 +169,6 @@ public class GameActivity extends AppCompatActivity {
                     }
                 }
             });
-
             row.addView(b);
         }
     }

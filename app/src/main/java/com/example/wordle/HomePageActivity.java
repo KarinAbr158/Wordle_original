@@ -3,8 +3,10 @@ package com.example.wordle;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -89,24 +91,24 @@ public class HomePageActivity extends AppCompatActivity {
             });
         }
 
-
-
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 android.widget.PopupMenu popup = new android.widget.PopupMenu(HomePageActivity.this, settings);
                 popup.getMenu().add("Every Game Mode");
                 popup.getMenu().add("Daily (24h) Mode");
+                popup.getMenu().add("See Personal Statistics");
 
                 popup.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
                     @Override
-                    public boolean onMenuItemClick(android.view.MenuItem item) {
-                        if (item.getTitle().equals("Every Game Mode")) {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if(item.getTitle().equals("Every Game Mode")) {
                             prefs.edit().putInt("game_mode", 0).apply();
-                            android.widget.Toast.makeText(HomePageActivity.this, "Mode: New word every game", android.widget.Toast.LENGTH_SHORT).show();
-                        } else {
+                            Toast.makeText(HomePageActivity.this, "Mode: New word every game", Toast.LENGTH_SHORT).show();
+                        }
+                        else if(item.getTitle().equals("Daily (24h) Mode")){
                             prefs.edit().putInt("game_mode", 1).apply();
-                            android.widget.Toast.makeText(HomePageActivity.this, "Mode: New word every 24 hours", android.widget.Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HomePageActivity.this, "Mode: New word every 24 hours", Toast.LENGTH_SHORT).show();
                         }
                         return true;
                     }
