@@ -14,6 +14,7 @@ public class GameLogic {
     private TextView[][] cells;
     private LinearLayout row1, row2, row3;
     private HashMap<Character, Integer> keyColors = new HashMap<>();
+    private String[] savedGuess;
 
     private int currentRow = 0;
     private int currentCol = 0;
@@ -39,6 +40,22 @@ public class GameLogic {
         this.row3 = row3;
         this.secretWord = secretWord;
         this.allWordsPossible = allWords;
+        this.savedGuess = new String[6];
+        for(int i = 0; i < this.savedGuess.length; i++){
+            this.savedGuess[i] = "";
+        }
+    }
+
+    public int getCurrentRow() {
+        return this.currentRow;
+    }
+
+    public int getCurrentCol() {
+        return this.currentCol;
+    }
+
+    public String GetSavedGuess(int index){
+        return this.savedGuess[index];
     }
 
     public void addLetter(String letter){
@@ -76,6 +93,7 @@ public class GameLogic {
         }
         guess = guess.toUpperCase();
         if(isInArray(guess)) {
+            this.savedGuess[this.currentRow] = guess;
             checkGuess(guess);
 
             // בדיקת סיום משחק (עושים את זה רק אם המילה הייתה חוקית)
@@ -157,6 +175,24 @@ public class GameLogic {
                 }
             }
         }
+    }
+
+    public void restoreRow(int row, String word) {
+        // 1. Put the letters back into the grid
+        for (int i = 0; i < 5; i++) {
+            cells[row][i].setText(String.valueOf(word.charAt(i)));
+        }
+
+        int originalRow = this.currentRow;
+        this.currentRow = row;
+        //recolour everything
+        checkGuess(word);
+
+        this.currentRow = row + 1;
+        this.currentCol = 0;
+
+        // 3. Save the word to your internal array so it can be re-saved if needed
+        this.savedGuess[row] = word;
     }
 
     public boolean isGameOver(){

@@ -2,6 +2,7 @@ package com.example.wordle;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -29,6 +30,9 @@ public class GameActivity extends AppCompatActivity {
     LinearLayout row1, row2, row3;
     TextView[][] cells = new TextView[6][5];
     GameLogic wordle;
+    SharedPreferences prefs;
+    SharedPreferences.Editor editor;
+    String randomWord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +41,31 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         Log.v("GameActivity", "started onCreate");
 
+        prefs = getSharedPreferences("GuessPrefs", MODE_PRIVATE);
+        editor = prefs.edit();
+
+        randomWord = prefs.getString("secret_word", null);
+        String[] allWords = getResources().getStringArray(R.array.wordle_answers);
+        if (randomWord == null) {
+            randomWord = allWords[new java.util.Random().nextInt(allWords.length)];
+            editor.putString("secret_word", randomWord).apply();
+        }
+
         row1 = findViewById(R.id.row1);
         row2 = findViewById(R.id.row2);
         row3 = findViewById(R.id.row3);
 
-        String[] allWords = getResources().getStringArray(R.array.wordle_answers);
-        String randomWord = allWords[new java.util.Random().nextInt(allWords.length)];
-
         wordGrid();
         wordle = new GameLogic(GameActivity.this, cells, row1, row2, row3, randomWord, allWords);
+
+        for (int i = 0; i < 6; i++) {
+            // Check if guess_1, guess_2, etc. exist in SharedPreferences
+            String savedGuess = prefs.getString("guess_" + (i + 1), null);
+            if (savedGuess != null && !savedGuess.isEmpty()) {
+                // This tells the logic class to rebuild the board visually
+                wordle.restoreRow(i, savedGuess);
+            }
+        }
 
         addKeys(row1, new String[]{"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"});
         addKeys(row2, new String[]{"A", "S", "D", "F", "G", "H", "J", "K", "L"});
@@ -119,6 +139,10 @@ public class GameActivity extends AppCompatActivity {
     private void handleKeyPress(String key) {
         if(key.equals("ENTER")){
             wordle.submitWord();
+            for(int i = 0; i < wordle.getCurrentRow(); i++){
+                editor.putString("guess_"+(i+1), wordle.GetSavedGuess(i));
+            }
+            editor.apply();
         }
         else if(key.equals("DEL")){
             wordle.deleteLetter();
