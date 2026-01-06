@@ -79,8 +79,8 @@ public class HomePageActivity extends AppCompatActivity {
             startGame.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // IMPORTANT: Only clear if we aren't loading!
-                    // We remove the word so GameActivity picks a new one
+                    //Only clear if isn't wloading!
+                    //remove the word so GameActivity picks a new one
                     prefs.edit().remove("secret_word").apply();
 
                     i = new Intent(HomePageActivity.this, GameActivity.class);
