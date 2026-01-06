@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start Game"
-        app:layout_constraintBottom_toTopOf="@+id/settingsBtn"
+        app:layout_constraintBottom_toTopOf="@+id/loadBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -37,7 +37,7 @@
         app:layout_constraintBottom_toTopOf="@+id/exitBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/loadBtn" />
 
     <Button
         android:id="@+id/exitBtn"
@@ -48,4 +48,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settingsBtn" />
+
+    <Button
+        android:id="@+id/loadBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Load Game"
+        app:layout_constraintBottom_toTopOf="@+id/settingsBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startBtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

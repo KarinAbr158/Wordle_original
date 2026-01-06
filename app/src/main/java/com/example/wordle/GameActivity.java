@@ -32,7 +32,9 @@ public class GameActivity extends AppCompatActivity {
     GameLogic wordle;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
-    String randomWord;
+    String randomWord, currentDate, lastSavedDate;
+    int gameMode;
+    boolean shouldReset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +46,47 @@ public class GameActivity extends AppCompatActivity {
         prefs = getSharedPreferences("GuessPrefs", MODE_PRIVATE);
         editor = prefs.edit();
 
+        gameMode = prefs.getInt("game_mode", 0);
+        currentDate = new java.text.SimpleDateFormat("yyyy-MM-dd",
+                java.util.Locale.getDefault()).format(new java.util.Date());
+        lastSavedDate = prefs.getString("last_played_date", "");
+
         randomWord = prefs.getString("secret_word", null);
-        String[] allWords = getResources().getStringArray(R.array.wordle_answers);
-        if (randomWord == null) {
-            randomWord = allWords[new java.util.Random().nextInt(allWords.length)];
-            editor.putString("secret_word", randomWord).apply();
+
+        shouldReset = false;
+        if (gameMode == 1) {// 24-Hour Mode
+            if (!currentDate.equals(lastSavedDate)) {
+                shouldReset = true; // Date has changed
+            }
         }
+        else{
+            // In this mode, we only generate a new word if the old game was finished
+            // (This is handled by the "Start Game" button clearing the prefs)
+            if (randomWord == null) {
+                shouldReset = true;
+            }
+        }
+
+        // Get the list of words
+        String[] allWords = getResources().getStringArray(R.array.wordle_answers);
+
+        // If the flag says we need a reset (either new day or new game)
+        if (shouldReset) {
+            // 1. Pick a brand new word
+            randomWord = allWords[new java.util.Random().nextInt(allWords.length)];
+
+            // 2. Save the new word and today's date to memory
+            editor.putString("secret_word", randomWord);
+            editor.putString("last_played_date", currentDate);
+
+            // 3. IMPORTANT: Clear old guesses from memory because this is a new word
+            for (int i = 1; i <= 6; i++) {
+                editor.remove("guess_" + i);
+            }
+
+            editor.apply();
+        }
+
 
         row1 = findViewById(R.id.row1);
         row2 = findViewById(R.id.row2);

@@ -4,6 +4,7 @@
     <!--  Source: https://wordlehints.co.uk/wordle-past-answers/  -->
     <!--  Total: 1652 words as of December 27, 2025  -->
     <string-array name="wordle_answers">
+        <item>COULD</item>
         <item>AEROS</item>
         <item>BATCH</item>
         <item>SPEED</item>

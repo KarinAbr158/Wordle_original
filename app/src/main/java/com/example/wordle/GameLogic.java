@@ -84,7 +84,10 @@ public class GameLogic {
     }
 
     public void submitWord(){
-        if(gameOver) return;
+        if(gameOver){
+            context.getSharedPreferences("GuessPrefs", Context.MODE_PRIVATE).edit().clear().apply();
+            return;
+        }
         if(currentCol < 5) return;
 
         String guess = "";
@@ -109,7 +112,6 @@ public class GameLogic {
             }
         }
         else{
-            // כאן נכנס הקוד שלך לטיפול במילה לא חוקית
             Toast.makeText(context, "Not in word list", Toast.LENGTH_SHORT).show();
             // הערה: אנחנו לא מקדמים את השורה (currentRow++) כדי שהמשתמש יוכל לתקן
         }
