@@ -2,8 +2,9 @@
     <string name="app_name">Wordle</string>
     <!--  Wordle Past Answers (2021-2025)  -->
     <!--  Source: https://wordlehints.co.uk/wordle-past-answers/  -->
-    <!--  Total: 1652 words as of December 27, 2025  -->
+    <!--  Total: 1655 words as of January 06, 2026  -->
     <string-array name="wordle_answers">
+        <item>STAND</item>
         <item>COULD</item>
         <item>AEROS</item>
         <item>BATCH</item>
