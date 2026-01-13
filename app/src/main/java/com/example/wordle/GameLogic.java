@@ -47,16 +47,16 @@ public class GameLogic {
         }
     }
 
-    public int getCurrentRow() {
+    public int getCurrentRow(){
         return this.currentRow;
     }
 
-    public int getCurrentCol() {
+    public int getCurrentCol(){
         return this.currentCol;
     }
 
-    public String GetSavedGuess(int index){
-        return this.savedGuess[index];
+    public String[] getSavedGuesses(){
+        return this.savedGuess;
     }
 
     public void addLetter(String letter){

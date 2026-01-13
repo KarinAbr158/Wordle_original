@@ -4,6 +4,8 @@
     <!--  Source: https://wordlehints.co.uk/wordle-past-answers/  -->
     <!--  Total: 1655 words as of January 06, 2026  -->
     <string-array name="wordle_answers">
+        <item>SLOWS</item>
+        <item>POLES</item>
         <item>STAND</item>
         <item>COULD</item>
         <item>AEROS</item>

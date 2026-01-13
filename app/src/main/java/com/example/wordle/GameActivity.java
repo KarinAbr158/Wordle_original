@@ -36,6 +36,7 @@ public class GameActivity extends AppCompatActivity {
     String randomWord, currentDate, lastSavedDate;
     int gameMode;
     boolean shouldReset;
+    Button returnBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +89,7 @@ public class GameActivity extends AppCompatActivity {
             editor.apply();
         }
 
-
+        returnBtn = findViewById(R.id.returnBtn);
         row1 = findViewById(R.id.row1);
         row2 = findViewById(R.id.row2);
         row3 = findViewById(R.id.row3);
@@ -108,7 +109,41 @@ public class GameActivity extends AppCompatActivity {
         addKeys(row1, new String[]{"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"});
         addKeys(row2, new String[]{"A", "S", "D", "F", "G", "H", "J", "K", "L"});
         addKeys(row3, new String[]{"⏎", "Z", "X", "C", "V", "B", "N", "M", "⌫"});
+
+        returnBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveGameAndFinish();
+            }
+        });
     }
+    // Add this new method to GameActivity.java
+
+    private void saveGameAndFinish() {
+        // 1. Get the SharedPreferences editorandroid.content.SharedPreferences prefs = getSharedPreferences("GuessPrefs", MODE_PRIVATE);
+        editor = prefs.edit();
+        // 2. Save the secret word so the game can be reloaded
+        editor.putString("secret_word", randomWord);
+
+        // 3. Loop through the rows managed by GameLogic and save each guess
+        if (wordle != null) {
+            // We get the array of saved guesses directly from the GameLogic instance
+            String[] guesses = wordle.getSavedGuesses();
+            for (int i = 0; i < guesses.length; i++) {
+                if (guesses[i] != null && !guesses[i].isEmpty()) {
+                    // Save as "guess_1", "guess_2", etc.
+                    editor.putString("guess_" + (i + 1), guesses[i]);
+                }
+            }
+        }
+
+        // 4. Apply the changes to disk
+        editor.apply();
+
+        // 5. Close the GameActivity and return to the home page
+        finish();
+    }
+
 
     private void wordGrid() {
         for(int r = 0; r < 6; r++) {
@@ -176,10 +211,6 @@ public class GameActivity extends AppCompatActivity {
     private void handleKeyPress(String key) {
         if(key.equals("ENTER")){
             wordle.submitWord();
-            for(int i = 0; i < wordle.getCurrentRow(); i++){
-                editor.putString("guess_"+(i+1), wordle.GetSavedGuess(i));
-            }
-            editor.apply();
         }
         else if(key.equals("DEL")){
             wordle.deleteLetter();

@@ -56,6 +56,7 @@ public class HomePageActivity extends AppCompatActivity {
         if (!hasOngoingGame) {
             loadGame.setEnabled(false);
             loadGame.setAlpha(0.3f);
+            loadGame.setBackgroundColor(0xBFEEEC46);
         } else {
             loadGame.setEnabled(true);
             loadGame.setAlpha(1.0f);
