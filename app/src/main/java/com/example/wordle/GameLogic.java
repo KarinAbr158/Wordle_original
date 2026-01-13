@@ -25,10 +25,11 @@ public class GameLogic {
             maxCol = 5;
     private boolean gameOver = false;
     private String secretWord;
-    /*private int maxStreak;
-    private int currStreak;
-    private int gamesPlayedCnt;
-    private int winPercentages;*/
+    private int maxStreak,
+            currStreak,
+            gamesPlayed,
+            winPercentages,
+            totalWins;
 
     private final int GREEN, YELLOW, GRAY, WHITE;
 
@@ -46,18 +47,15 @@ public class GameLogic {
         for(int i = 0; i < this.savedGuess.length; i++){
             this.savedGuess[i] = "";
         }
+        this.maxStreak = 0;
+        this.currStreak = 0;
+        this.gamesPlayed = 0;
+        this.totalWins = 0;
+        this.winPercentages = (this.totalWins/this.gamesPlayed)*100;
         GREEN = ContextCompat.getColor(this.context, R.color.green);
         YELLOW = ContextCompat.getColor(this.context, R.color.yellow);
         GRAY = ContextCompat.getColor(this.context, R.color.gray);
         WHITE = ContextCompat.getColor(this.context, R.color.white);
-    }
-
-    public int getCurrentRow(){
-        return this.currentRow;
-    }
-
-    public int getCurrentCol(){
-        return this.currentCol;
     }
 
     public String[] getSavedGuesses(){
@@ -106,10 +104,18 @@ public class GameLogic {
                 gameOver = true;
                 Toast.makeText(context, "Splendid!", Toast.LENGTH_SHORT).show();
                 handleGameEnd(); // Clear specific keys
+                this.totalWins++;
+                this.gamesPlayed++;
+                this.currStreak++;
+                if(this.maxStreak<this.currStreak){
+                    this.maxStreak = this.currStreak;
+                }
             } else if(currentRow == 5) {
                 gameOver = true;
                 Toast.makeText(context, "Game Over! The word was: " + secretWord, Toast.LENGTH_LONG).show();
                 handleGameEnd(); // Clear specific keys
+                this.gamesPlayed++;
+                this.currStreak = 0;
             } else {
                 currentRow++;
                 currentCol = 0;
@@ -127,7 +133,7 @@ public class GameLogic {
 
         //only remove the things that allow a game to be "Loaded"
         editor.remove("secret_word");
-        for (int i = 1; i <= 6; i++) {
+        for (int i = 1; i <= maxRow; i++) {
             editor.remove("guess_" + i);
         }
         //doesn't clear everything, because it's needs to save "last_played_date"
@@ -137,7 +143,7 @@ public class GameLogic {
 
 
     private void checkGuess(String guess){
-        boolean[] used = new boolean[5];
+        boolean[] used = new boolean[maxCol];
         //Green letters
         for(int i = 0; i < used.length; i++){
             if(guess.charAt(i) == secretWord.charAt(i)){
@@ -198,7 +204,7 @@ public class GameLogic {
 
     public void restoreRow(int row, String word) {
         //Put the letters back into the grid
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < maxCol; i++) {
             cells[row][i].setText(String.valueOf(word.charAt(i)));
         }
 

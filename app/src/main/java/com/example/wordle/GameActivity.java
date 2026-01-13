@@ -120,7 +120,8 @@ public class GameActivity extends AppCompatActivity {
     // Add this new method to GameActivity.java
 
     private void saveGameAndFinish() {
-        // 1. Get the SharedPreferences editorandroid.content.SharedPreferences prefs = getSharedPreferences("GuessPrefs", MODE_PRIVATE);
+        // 1. Get the SharedPreferences
+        prefs = getSharedPreferences("GuessPrefs", MODE_PRIVATE);
         editor = prefs.edit();
         // 2. Save the secret word so the game can be reloaded
         editor.putString("secret_word", randomWord);
