@@ -95,7 +95,7 @@ public class GameActivity extends AppCompatActivity {
         row3 = findViewById(R.id.row3);
 
         wordGrid();
-        wordle = new GameLogic(cells, row1, row2, row3, randomWord, allWords);
+        wordle = new GameLogic(GameActivity.this, cells, row1, row2, row3, randomWord, allWords);
 
         for (int i = 0; i < 6; i++) {
             // Check if guess_1, guess_2, etc. exist in SharedPreferences

@@ -8,6 +8,8 @@ import android.widget.TextView;
 import android.content.Context;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.HashMap;
 
 public class GameLogic {
@@ -15,26 +17,25 @@ public class GameLogic {
     private TextView[][] cells;
     private LinearLayout row1, row2, row3;
     private HashMap<Character, Integer> keyColors = new HashMap<>();
-    private String[] savedGuess;
+    private String[] savedGuess, allWordsPossible;
 
-    private int currentRow = 0;
-    private int currentCol = 0;
+    private int currentRow = 0,
+            currentCol = 0,
+            maxRow = 6,
+            maxCol = 5;
     private boolean gameOver = false;
     private String secretWord;
-    private String[] allWordsPossible;
     /*private int maxStreak;
     private int currStreak;
     private int gamesPlayedCnt;
     private int winPercentages;*/
 
-    private final int GREEN = 0xFF6AAA64;
-    private final int YELLOW = 0xFFC9B458;
-    private final int GRAY = 0xFF787C7E;
+    private final int GREEN, YELLOW, GRAY, WHITE;
 
-    public GameLogic(TextView[][] cells,
+    public GameLogic(Context context, TextView[][] cells,
                      LinearLayout row1, LinearLayout row2, LinearLayout row3,
                      String secretWord, String[] allWords) {
-        //this.context = context;
+        this.context = context;
         this.cells = cells;
         this.row1 = row1;
         this.row2 = row2;
@@ -45,6 +46,10 @@ public class GameLogic {
         for(int i = 0; i < this.savedGuess.length; i++){
             this.savedGuess[i] = "";
         }
+        GREEN = ContextCompat.getColor(this.context, R.color.green);
+        YELLOW = ContextCompat.getColor(this.context, R.color.yellow);
+        GRAY = ContextCompat.getColor(this.context, R.color.gray);
+        WHITE = ContextCompat.getColor(this.context, R.color.white);
     }
 
     public int getCurrentRow(){
@@ -61,7 +66,7 @@ public class GameLogic {
 
     public void addLetter(String letter){
         if(gameOver) return;
-        if(currentCol < 5){
+        if(currentCol < maxCol){
             cells[currentRow][currentCol].setText(letter.toUpperCase());
             currentCol++;
         }
@@ -86,10 +91,10 @@ public class GameLogic {
 
     public void submitWord(){
         if(gameOver) return;
-        if(currentCol < 5) return;
+        if(currentCol < maxCol) return;
 
         String guess = "";
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < maxCol; i++){
             guess += (cells[currentRow][i].getText().toString());
         }
         guess = guess.toUpperCase();
@@ -99,11 +104,11 @@ public class GameLogic {
 
             if(guess.equals(secretWord)) {
                 gameOver = true;
-                //Toast.makeText(context, "Splendid!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Splendid!", Toast.LENGTH_SHORT).show();
                 handleGameEnd(); // Clear specific keys
             } else if(currentRow == 5) {
                 gameOver = true;
-                //Toast.makeText(context, "Game Over! The word was: " + secretWord, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Game Over! The word was: " + secretWord, Toast.LENGTH_LONG).show();
                 handleGameEnd(); // Clear specific keys
             } else {
                 currentRow++;
@@ -111,7 +116,7 @@ public class GameLogic {
             }
         }
         else{
-            //Toast.makeText(context, "Not in word list", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Not in word list", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -134,7 +139,7 @@ public class GameLogic {
     private void checkGuess(String guess){
         boolean[] used = new boolean[5];
         //Green letters
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < used.length; i++){
             if(guess.charAt(i) == secretWord.charAt(i)){
                 cells[currentRow][i].setBackgroundColor(GREEN);
                 colorKey(guess.charAt(i), GREEN);
@@ -142,18 +147,16 @@ public class GameLogic {
             }
         }
         //Yellow/Gray letters
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < used.length; i++){
             int currentColor = ((ColorDrawable)cells[currentRow][i].getBackground()).getColor();
-            if(currentColor == GREEN){
-                //already green, skip
-            }
-            else{
+            if(currentColor != GREEN){
                 boolean found = false;
-                for(int j = 0; j < 5; j++){
+                for(int j = 0; j < used.length; j++){
                     if(!used[j] && guess.charAt(i) == secretWord.charAt(j)){
+                        //if it's not green, but it is in part of the secret word, then colours it yellow
                         found = true;
                         used[j] = true;
-                        break;
+                        j=used.length;
                     }
                 }
                 if(found){
@@ -171,14 +174,14 @@ public class GameLogic {
     private void colorKey(char letter, int color) {
         letter = Character.toUpperCase(letter);
         //GREEN > YELLOW > GRAY
-        if(!keyColors.containsKey(letter)){
-            keyColors.put(letter, color);
+        if(!this.keyColors.containsKey(letter)){
+            this.keyColors.put(letter, color);
         }
         else{
-            int oldColor = keyColors.get(letter);
+            int oldColor = this.keyColors.get(letter);
             if (oldColor == GREEN) return;
             if (oldColor == YELLOW && color == GRAY) return;
-            keyColors.put(letter, color);
+            this.keyColors.put(letter, color);
         }
         LinearLayout[] rows = {row1, row2, row3};
 
@@ -187,7 +190,7 @@ public class GameLogic {
                 Button b = (Button)row.getChildAt(i);
                 if (b.getText().length() == 1 && b.getText().charAt(0) == letter){
                     b.setBackgroundColor(color);
-                    b.setTextColor(0xFFFFFFFF);//White so you see it better against the dark background
+                    b.setTextColor(WHITE);//so you see it better against the dark background
                 }
             }
         }
