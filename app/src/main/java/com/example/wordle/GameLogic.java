@@ -31,10 +31,10 @@ public class GameLogic {
     private final int YELLOW = 0xFFC9B458;
     private final int GRAY = 0xFF787C7E;
 
-    public GameLogic(Context context, TextView[][] cells,
+    public GameLogic(TextView[][] cells,
                      LinearLayout row1, LinearLayout row2, LinearLayout row3,
                      String secretWord, String[] allWords) {
-        this.context = context;
+        //this.context = context;
         this.cells = cells;
         this.row1 = row1;
         this.row2 = row2;
@@ -99,11 +99,11 @@ public class GameLogic {
 
             if(guess.equals(secretWord)) {
                 gameOver = true;
-                Toast.makeText(context, "Splendid!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Splendid!", Toast.LENGTH_SHORT).show();
                 handleGameEnd(); // Clear specific keys
             } else if(currentRow == 5) {
                 gameOver = true;
-                Toast.makeText(context, "Game Over! The word was: " + secretWord, Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "Game Over! The word was: " + secretWord, Toast.LENGTH_LONG).show();
                 handleGameEnd(); // Clear specific keys
             } else {
                 currentRow++;
@@ -111,7 +111,7 @@ public class GameLogic {
             }
         }
         else{
-            Toast.makeText(context, "Not in word list", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Not in word list", Toast.LENGTH_SHORT).show();
         }
     }
 
