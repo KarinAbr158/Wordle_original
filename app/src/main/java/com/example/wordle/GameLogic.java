@@ -20,8 +20,8 @@ public class GameLogic {
     private String[] savedGuess, allWordsPossible;
 
     private int currentRow = 0,
-            currentCol = 0,
-            maxRow = 6,
+            currentCol = 0;
+    private final int maxRow = 6,
             maxCol = 5;
     private boolean gameOver = false;
     private String secretWord;
@@ -80,7 +80,7 @@ public class GameLogic {
 
     public boolean isInArray(String guess){
         for(int i = 0; i < this.allWordsPossible.length; i++){
-            if(this.allWordsPossible[i].equals(guess)){
+            if(this.allWordsPossible[i].equalsIgnoreCase(guess)){
                 return true;
             }
         }
@@ -91,10 +91,12 @@ public class GameLogic {
         if(gameOver) return;
         if(currentCol < maxCol) return;
 
-        String guess = "";
-        for(int i = 0; i < maxCol; i++){
-            guess += (cells[currentRow][i].getText().toString());
+        StringBuilder guessBuilder = new StringBuilder();
+        for(int i = 0; i < 5; i++){
+            guessBuilder.append(cells[currentRow][i].getText().toString());
         }
+        String guess = guessBuilder.toString();
+
         guess = guess.toUpperCase();
         if(isInArray(guess)) {
             this.savedGuess[this.currentRow] = guess;
@@ -208,7 +210,6 @@ public class GameLogic {
             cells[row][i].setText(String.valueOf(word.charAt(i)));
         }
 
-        int originalRow = this.currentRow;
         this.currentRow = row;
         //recolour everything
         checkGuess(word);

@@ -30,11 +30,6 @@ public class LogInActivity extends AppCompatActivity {
         login = findViewById(R.id.loginBtn);
         homepage = findViewById(R.id.cheatBtn);
 
-        prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(usernameFieldInput.getText().toString(), passwordFieldInput.getText().toString());
-        editor.apply();
-
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

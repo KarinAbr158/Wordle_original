@@ -28,8 +28,8 @@ import java.util.List;
 
 public class GameActivity extends AppCompatActivity {
 
-    LinearLayout row1, row2, row3;
-    TextView[][] cells = new TextView[6][5];
+    private LinearLayout row1, row2, row3;
+    private TextView[][] cells = new TextView[6][5];
     GameLogic wordle;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
@@ -49,7 +49,7 @@ public class GameActivity extends AppCompatActivity {
         editor = prefs.edit();
 
         gameMode = prefs.getInt("game_mode", 0);
-        currentDate = new SimpleDateFormat("yyyy-MM-dd",
+        currentDate = new SimpleDateFormat("dd-MM-yyyy",
                 java.util.Locale.getDefault()).format(new java.util.Date());
         lastSavedDate = prefs.getString("last_played_date", "");
 
