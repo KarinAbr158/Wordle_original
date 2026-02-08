@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 
 public class HomePageActivity extends AppCompatActivity {
 
-    Button startGame, loadGame, settings, exit;
+    Button startGame, settings, exit;
     Intent i;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,6 @@ public class HomePageActivity extends AppCompatActivity {
             return insets;
         });
 
-        loadGame = findViewById(R.id.loadBtn);
         startGame = findViewById(R.id.startBtn);
         settings = findViewById(R.id.settingsBtn);
         exit = findViewById(R.id.exitBtn);
@@ -45,37 +44,21 @@ public class HomePageActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("GuessPrefs", MODE_PRIVATE);
         //Check if an ongoing game exists
-        boolean hasOngoingGame = prefs.getString("secret_word", null) != null;
+        //boolean hasOngoingGame = prefs.getString("secret_word", null) != null;
         //Check 24-hour mode status
         int gameMode = prefs.getInt("game_mode", 0); //0 = every new game, 1 = 24h
         String currentDate = new SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault()).format(new java.util.Date());
         String lastPlayedDate = prefs.getString("last_played_date", "");
         boolean alreadyPlayedToday = currentDate.equals(lastPlayedDate);
 
-        // LOAD GAME BUTTON LOGIC
-        if (!hasOngoingGame) {
-            loadGame.setEnabled(false);
-            loadGame.setAlpha(0.3f);
-            loadGame.setBackgroundColor(0xBFEEEC46);
-        } else {
-            loadGame.setEnabled(true);
-            loadGame.setAlpha(1.0f);
-            loadGame.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    i = new Intent(HomePageActivity.this, GameActivity.class);
-                    startActivity(i);
-                }
-            });
-        }
-
         // START GAME BUTTON LOGIC
-        //Disabled if: 24h mode AND played today AND no game is currently in progress
-        if (gameMode == 1 && alreadyPlayedToday && !hasOngoingGame) {
+        //Disabled if: 24h mode AND played today
+        if (gameMode == 1 && alreadyPlayedToday) {
             startGame.setEnabled(false);
             startGame.setAlpha(0.3f);
             startGame.setText("Next Word Tomorrow");
-        } else {
+        }
+        else{
             startGame.setEnabled(true);
             startGame.setAlpha(1.0f);
             startGame.setText("Start New Game");
