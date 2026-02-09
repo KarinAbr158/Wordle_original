@@ -4,6 +4,10 @@
     <!--  Source: https://wordlehints.co.uk/wordle-past-answers/  -->
     <!--  Total: 1657 words as of January 06, 2026  -->
     <string-array name="wordle_answers">
+        <item>BRIBE</item>
+        <item>GRILL</item>
+        <item>GREEK</item>
+        <item>GREET</item>
         <item>SLOWS</item>
         <item>POLES</item>
         <item>STAND</item>

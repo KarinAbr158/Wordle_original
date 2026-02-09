@@ -25,6 +25,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -74,16 +75,13 @@ public class GameActivity extends AppCompatActivity {
         // If the flag says we need a reset (either new day or new game)
         if (shouldReset || randomWord == null) { // always reset if no word
             // 1. Pick a brand new word
-            randomWord = allWords[new java.util.Random().nextInt(allWords.length)];
+            randomWord = allWords[new Random().nextInt(allWords.length)];
 
             // 2. Save the new word and today's date to memory
             editor.putString("secret_word", randomWord);
             editor.putString("last_played_date", currentDate);
 
-            // 3. IMPORTANT: Clear old guesses from memory because this is a new word
-            for (int i = 1; i <= 6; i++) {
-                editor.remove("guess_" + i);
-            }
+
 
             editor.apply();
         }

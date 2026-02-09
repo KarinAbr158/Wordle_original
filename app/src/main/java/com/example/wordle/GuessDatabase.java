@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Guess.class}, version = 1)
+@Database(entities = {Guess.class}, version = 2)
 public abstract class GuessDatabase extends RoomDatabase {
     private static GuessDatabase instance;
     public abstract GuessDAO wordDao();
@@ -18,6 +18,7 @@ public abstract class GuessDatabase extends RoomDatabase {
                             GuessDatabase.class,
                             "word_database")
                     .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
                     .build();
         }
         return instance;

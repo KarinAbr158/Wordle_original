@@ -28,7 +28,6 @@ public class GameLogic {
     private int maxStreak,
             currStreak,
             gamesPlayed,
-            winPercentages,
             totalWins;
 
     private final int GREEN, YELLOW, GRAY, WHITE;
@@ -51,16 +50,18 @@ public class GameLogic {
         this.currStreak = 0;
         this.gamesPlayed = 0;
         this.totalWins = 0;
-        this.winPercentages = (this.totalWins/this.gamesPlayed)*100;
         GREEN = ContextCompat.getColor(this.context, R.color.green);
         YELLOW = ContextCompat.getColor(this.context, R.color.yellow);
         GRAY = ContextCompat.getColor(this.context, R.color.gray);
         WHITE = ContextCompat.getColor(this.context, R.color.white);
     }
 
-    public String[] getSavedGuesses(){
-        return this.savedGuess;
+    public int getWinPercentage() {
+        if (gamesPlayed == 0) return 0;
+        return (totalWins * 100) / gamesPlayed;
     }
+
+
 
     public void addLetter(String letter){
         if(gameOver) return;
@@ -133,11 +134,8 @@ public class GameLogic {
         SharedPreferences prefs = context.getSharedPreferences("GuessPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
-        //only remove the things that allow a game to be "Loaded"
+        //remove the secret word so a new game can start
         editor.remove("secret_word");
-        for (int i = 1; i <= maxRow; i++) {
-            editor.remove("guess_" + i);
-        }
         //doesn't clear everything, because it's needs to save "last_played_date"
         //for the 24-hour mode check in HomePageActivity.
         editor.apply();
@@ -204,22 +202,7 @@ public class GameLogic {
         }
     }
 
-    public void restoreRow(int row, String word) {
-        //Put the letters back into the grid
-        for (int i = 0; i < maxCol; i++) {
-            cells[row][i].setText(String.valueOf(word.charAt(i)));
-        }
 
-        this.currentRow = row;
-        //recolour everything
-        checkGuess(word);
-
-        this.currentRow = row + 1;
-        this.currentCol = 0;
-
-        //save the word to internal array so it can be re-saved if needed
-        this.savedGuess[row] = word;
-    }
 
     public boolean isGameOver(){
         return gameOver;

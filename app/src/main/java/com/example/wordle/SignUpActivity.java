@@ -33,11 +33,20 @@ public class SignUpActivity extends AppCompatActivity {
         signupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String storedPass = prefs.getString(newUsername.getText().toString(), null);
+                String username = newUsername.getText().toString();
+                String password = newPassword.getText().toString();
+                String confirmPass = passwordConf.getText().toString();
+
+                if (username.isEmpty() || password.isEmpty() || confirmPass.isEmpty()) {
+                    Toast.makeText(SignUpActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String storedPass = prefs.getString(username, null);
                 if(storedPass == null){
                     //if the new username doesn't exist then:
-                    if(passwordConf.getText().toString().equals(newPassword.getText().toString())){
-                        editor.putString(newUsername.getText().toString(), newPassword.getText().toString());
+                    if(confirmPass.equals(password)){
+                        editor.putString(username, password);
                         editor.apply();
                         //returns to the login page in order to log in
                         Intent i = new Intent(SignUpActivity.this, LogInActivity.class);

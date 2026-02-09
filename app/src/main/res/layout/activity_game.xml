@@ -14,18 +14,6 @@
     <!--                ROW 1                      -->
     <!-- ========================================= -->
 
-    <Button
-        android:id="@+id/returnBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Save and Exit"
-        app:layout_constraintBottom_toTopOf="@+id/cell_1_1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/cell_1_1"
         android:layout_width="60dp"
@@ -36,7 +24,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/cell_1_2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/returnBtn" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/cell_1_2"
@@ -48,7 +36,7 @@
         app:layout_constraintBottom_toTopOf="@+id/cell_2_2"
         app:layout_constraintEnd_toStartOf="@+id/cell_1_3"
         app:layout_constraintStart_toEndOf="@id/cell_1_1"
-        app:layout_constraintTop_toBottomOf="@+id/returnBtn" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/cell_1_3"
@@ -60,7 +48,7 @@
         app:layout_constraintBottom_toTopOf="@+id/cell_2_3"
         app:layout_constraintEnd_toStartOf="@+id/cell_1_4"
         app:layout_constraintStart_toEndOf="@id/cell_1_2"
-        app:layout_constraintTop_toBottomOf="@+id/returnBtn" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/cell_1_4"
@@ -72,7 +60,7 @@
         app:layout_constraintBottom_toTopOf="@+id/cell_2_4"
         app:layout_constraintEnd_toStartOf="@+id/cell_1_5"
         app:layout_constraintStart_toEndOf="@id/cell_1_3"
-        app:layout_constraintTop_toBottomOf="@+id/returnBtn" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/cell_1_5"
@@ -84,7 +72,7 @@
         app:layout_constraintBottom_toTopOf="@+id/cell_2_5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/cell_1_4"
-        app:layout_constraintTop_toBottomOf="@+id/returnBtn" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <!-- ========================================= -->
