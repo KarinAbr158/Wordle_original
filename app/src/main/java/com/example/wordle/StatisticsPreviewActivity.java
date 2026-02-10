@@ -19,7 +19,7 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
     Button backToHomeBtn;
     GuessDatabase database;
     GuessDAO guessDAO;
-    //Guess presentedGuess;
+    Guess presentedGuess;
     SharedPreferences userPrefs;
     SharedPreferences.Editor userEditor;
     String username, currentStreakStr, maxStreakStr, gamesPlayedStr, totalWinsStr;
@@ -48,53 +48,35 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
 
         database = GuessDatabase.getInstance(this);
         guessDAO = database.guessDao();
-        //presentedGuess = guessDAO.getStats(username);
-        currentStreakStr = String.valueOf(guessDAO.getCurrentStreak(username));
-        maxStreakStr = String.valueOf(guessDAO.getMaxStreak(username));
-        gamesPlayedStr = String.valueOf(guessDAO.getGamesPlayed(username));
-        totalWinsStr = String.valueOf(guessDAO.getTotalWins(username));
+        presentedGuess = guessDAO.getStats(username);
 
+        if(presentedGuess == null){
+            presentedGuess = new Guess(username,0,0,0,0);
+        }
 
-        if(gamesPlayedStr == "0") calcPercentages = 0;
-         else
-             calcPercentages = (Integer.valueOf(totalWinsStr) * 100) / Integer.valueOf(gamesPlayedStr);
+        int calcPercentages;
+        if(presentedGuess.getGamesPlayed() == 0)
+            calcPercentages = 0;
+        else
+            calcPercentages =
+                    (presentedGuess.getTotalWins() * 100)
+                            / presentedGuess.getGamesPlayed();
 
-        currStreak.setText(builder
-                .append(currStreak
-                        .getText()
-                        .toString())
-                .append(currentStreakStr)
-                .toString());
+        currStreak.setText("Current Streak: " +
+                presentedGuess.getCurrentStreak());
 
-        maxStreak.setText(builder
-                .append(maxStreak
-                        .getText()
-                        .toString())
-                .append(maxStreakStr)
-                .toString());
+        maxStreak.setText("Max Streak: " +
+                presentedGuess.getMaxStreak());
 
-        gamesPlayed.setText(builder
-                .append(gamesPlayed
-                        .getText()
-                        .toString())
-                .append(gamesPlayedStr)
-                .toString());
+        gamesPlayed.setText("Games Played: " +
+                presentedGuess.getGamesPlayed());
 
+        totalWins.setText("Total Wins: " +
+                presentedGuess.getTotalWins());
 
-        totalWins.setText(builder
-                .append(totalWins
-                        .getText()
-                        .toString())
-                .append(totalWinsStr)
-                .toString());
+        winPercentage.setText("Win: " +
+                calcPercentages + "%");
 
-        winPercentage.setText(builder
-                .append(winPercentage
-                        .getText()
-                        .toString())
-                .append(String.valueOf(calcPercentages))
-                .append("%")
-                .toString());
 
         backToHomeBtn.setOnClickListener(new View.OnClickListener() {
             @Override

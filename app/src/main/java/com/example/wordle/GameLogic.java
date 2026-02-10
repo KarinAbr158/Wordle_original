@@ -56,7 +56,7 @@ public class GameLogic {
         WHITE = ContextCompat.getColor(this.context, R.color.white);
     }
 
-    public void handleStreak(){
+    /*public void handleStreak(){
         if(this.gameOver == true){
             if(this.currentRow < this.maxRow){
                 if(this.currStreak == this.maxStreak || this.maxStreak==0){
@@ -70,7 +70,7 @@ public class GameLogic {
                 this.currStreak = 0;
             }
         }
-    }
+    }*/
 
     public int getMaxStreak() {
         return this.maxStreak;
@@ -171,6 +171,7 @@ public class GameLogic {
         //doesn't clear everything, because it's needs to save "last_played_date"
         //for the 24-hour mode check in HomePageActivity.
         editor.apply();
+        //handleStreak();
     }
 
 

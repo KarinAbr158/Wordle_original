@@ -94,6 +94,10 @@ public class HomePageActivity extends AppCompatActivity {
                             prefs.edit().putInt("game_mode", 1).apply();
                             Toast.makeText(HomePageActivity.this, "Mode: New word every 24 hours", Toast.LENGTH_SHORT).show();
                         }
+                        else if(item.getTitle().equals("See Personal Statistics")){
+                            i = new Intent(HomePageActivity.this, StatisticsPreviewActivity.class);
+                            startActivity(i);
+                        }
                         return true;
                     }
                 });

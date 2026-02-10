@@ -171,18 +171,7 @@ public class GameActivity extends AppCompatActivity {
         if(key.equals("ENTER")){
             wordle.submitWord();
             if(wordle.isGameOver()==true){
-                Guess guess;
-                wordle.handleStreak();
-                int wonOrNot, row;
-                if(wordle.getCurrentRow() < 6){
-                    wonOrNot = 1;
-                    row = 1;
-                }
-                else{
-                    wonOrNot = 0;
-                    row = 0;
-                }
-                guess = new Guess(username,
+                Guess guess = new Guess(username,
                         wordle.getCurrStreak(),
                         wordle.getMaxStreak(),
                         wordle.getGamesPlayed(),
