@@ -19,7 +19,7 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
     Button backToHomeBtn;
     GuessDatabase database;
     GuessDAO guessDAO;
-    Guess presentedGuess;
+    //Guess presentedGuess;
     SharedPreferences userPrefs;
     SharedPreferences.Editor userEditor;
     String username, currentStreakStr, maxStreakStr, gamesPlayedStr, totalWinsStr;
@@ -48,31 +48,36 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
 
         database = GuessDatabase.getInstance(this);
         guessDAO = database.guessDao();
-        presentedGuess = guessDAO.getStats(username);
+        //presentedGuess = guessDAO.getStats(username);
+        currentStreakStr = String.valueOf(guessDAO.getCurrentStreak(username));
+        maxStreakStr = String.valueOf(guessDAO.getMaxStreak(username));
+        gamesPlayedStr = String.valueOf(guessDAO.getGamesPlayed(username));
+        totalWinsStr = String.valueOf(guessDAO.getTotalWins(username));
 
-        if(presentedGuess.getGamesPlayed() == 0) calcPercentages = 0;
+
+        if(gamesPlayedStr == "0") calcPercentages = 0;
          else
-             calcPercentages = (presentedGuess.getTotalWins() * 100) / presentedGuess.getGamesPlayed();
+             calcPercentages = (Integer.valueOf(totalWinsStr) * 100) / Integer.valueOf(gamesPlayedStr);
 
         currStreak.setText(builder
                 .append(currStreak
                         .getText()
                         .toString())
-                .append(String.valueOf(presentedGuess.getCurrentStreak()))
+                .append(currentStreakStr)
                 .toString());
 
         maxStreak.setText(builder
                 .append(maxStreak
                         .getText()
                         .toString())
-                .append(String.valueOf(presentedGuess.getMaxStreak()))
+                .append(maxStreakStr)
                 .toString());
 
         gamesPlayed.setText(builder
                 .append(gamesPlayed
                         .getText()
                         .toString())
-                .append(String.valueOf(presentedGuess.getGamesPlayed()))
+                .append(gamesPlayedStr)
                 .toString());
 
 
@@ -80,7 +85,7 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
                 .append(totalWins
                         .getText()
                         .toString())
-                .append(String.valueOf(presentedGuess.getTotalWins()))
+                .append(totalWinsStr)
                 .toString());
 
         winPercentage.setText(builder
