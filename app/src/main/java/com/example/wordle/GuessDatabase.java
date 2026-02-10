@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 @Database(entities = {Guess.class}, version = 2)
 public abstract class GuessDatabase extends RoomDatabase {
     private static GuessDatabase instance;
-    public abstract GuessDAO wordDao();
+    public abstract GuessDAO guessDao();
 
     public static synchronized GuessDatabase getInstance(Context context){
         if(instance == null){

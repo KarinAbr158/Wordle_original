@@ -1,65 +1,43 @@
 package com.example.wordle;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "guesses")
+@Entity(tableName = "player_stats")
 public class Guess {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    @PrimaryKey
+    @NonNull private String username;
 
-    // 1 = win, 0 = loss
-    private int correctGuessNumCount;
+    private int currentStreak;
+    private int maxStreak;
+    private int gamesPlayed;
+    private int totalWins;
 
-    // 1–6 for win, 0 if lost
-    private int guessIndex;
+    public Guess() {}
 
-    // Username of the player
-    private String username;
-
-    // REQUIRED by Room
-    public Guess() {
-    }
-
-    // Convenient constructor for inserts
-    public Guess(int correctGuessNumCount, int guessIndex, String username) {
-        this.correctGuessNumCount = correctGuessNumCount;
-        this.guessIndex = guessIndex;
+    public Guess(String username, int currentStreak, int maxStreak,
+                 int gamesPlayed, int totalWins) {
         this.username = username;
+        this.currentStreak = currentStreak;
+        this.maxStreak = maxStreak;
+        this.gamesPlayed = gamesPlayed;
+        this.totalWins = totalWins;
     }
 
-    public int getId() {
-        return id;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public int getCurrentStreak() { return currentStreak; }
+    public void setCurrentStreak(int currentStreak) { this.currentStreak = currentStreak; }
 
-    public int getCorrectGuessNumCount() {
-        return correctGuessNumCount;
-    }
+    public int getMaxStreak() { return maxStreak; }
+    public void setMaxStreak(int maxStreak) { this.maxStreak = maxStreak; }
 
-    public void setCorrectGuessNumCount(int correctGuessNumCount) {
-        this.correctGuessNumCount = correctGuessNumCount;
-    }
+    public int getGamesPlayed() { return gamesPlayed; }
+    public void setGamesPlayed(int gamesPlayed) { this.gamesPlayed = gamesPlayed; }
 
-    public int getGuessIndex() {
-        return guessIndex;
-    }
-
-    public void setGuessIndex(int guessIndex) {
-        this.guessIndex = guessIndex;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public int getTotalWins() { return totalWins; }
+    public void setTotalWins(int totalWins) { this.totalWins = totalWins; }
 }
-
-

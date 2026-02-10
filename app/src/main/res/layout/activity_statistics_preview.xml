@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StatisticsPreviewActivity">
+
+    <TextView
+        android:id="@+id/statisticsTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Statistics"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@+id/currentStreakTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/currentStreakTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current streak"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/gamesPlayedTV"
+        app:layout_constraintEnd_toStartOf="@+id/maxStreakTV"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/statisticsTV" />
+
+    <TextView
+        android:id="@+id/maxStreakTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Max streak"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/totalWinsTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/currentStreakTV"
+        app:layout_constraintTop_toBottomOf="@+id/statisticsTV" />
+
+    <TextView
+        android:id="@+id/gamesPlayedTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Games played"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/winPercentageTV"
+        app:layout_constraintEnd_toStartOf="@+id/totalWinsTV"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currentStreakTV" />
+
+    <TextView
+        android:id="@+id/totalWinsTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total wins"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/winPercentageTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/gamesPlayedTV"
+        app:layout_constraintTop_toBottomOf="@+id/maxStreakTV" />
+
+    <TextView
+        android:id="@+id/winPercentageTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Win percentages"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/statsToHomeBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gamesPlayedTV" />
+
+    <Button
+        android:id="@+id/statsToHomeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home Page"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/winPercentageTV" />
+</androidx.constraintlayout.widget.ConstraintLayout>

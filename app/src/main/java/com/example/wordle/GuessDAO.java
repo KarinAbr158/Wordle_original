@@ -1,36 +1,43 @@
 package com.example.wordle;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+
 
 import java.util.List;
 
 @Dao
 public interface GuessDAO {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertOrUpdate(Guess stats);
+
     @Insert
     void insert(Guess guess);
 
-    @Insert
-    void insertAll(List<Guess> guess);
+    @Query("SELECT * FROM player_stats WHERE username = :username LIMIT 1")
+    Guess getStats(String username);
+    /*Finds the row with matching username
+    Returns full stats object
+    LIMIT 1 protects you from crashes if duplicates somehow exist.*/
 
-    @Delete
-    void delete(Guess guess);
+    @Query("SELECT gamesPlayed FROM player_stats WHERE username = :username")
+    int getGamesPlayed(String username);
+    //Returns how many games the player has played.
 
-    @Query("SELECT * FROM guesses")
-    List<Guess> getAllGuesses();
-
-    @Query("SELECT * FROM guesses WHERE id = :id")
-    Guess getGuessByID(int id);
-
-    // Statistics queries (filtered by username)
-    @Query("SELECT COUNT(*) FROM guesses WHERE username = :username")
-    int getTotalGamesPlayed(String username);
-
-    @Query("SELECT COUNT(*) FROM guesses WHERE username = :username AND correctGuessNumCount = 1")
+    @Query("SELECT totalWins FROM player_stats WHERE username = :username")
     int getTotalWins(String username);
+    //Returns numbers of wins
 
-    @Query("SELECT guessIndex, COUNT(*) as count FROM guesses WHERE username = :username AND correctGuessNumCount = 1 GROUP BY guessIndex")
-    List<GuessDistribution> getGuessDistribution(String username);
+    @Query("SELECT currentStreak FROM player_stats WHERE username = :username")
+    int getCurrentStreak(String username);
+    //Returns player's current streak
+
+    @Query("SELECT maxStreak FROM player_stats WHERE username = :username")
+    int getMaxStreak(String username);
+    //Returns player's max streak
+
+
 }

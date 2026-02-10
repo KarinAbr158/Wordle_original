@@ -56,6 +56,38 @@ public class GameLogic {
         WHITE = ContextCompat.getColor(this.context, R.color.white);
     }
 
+    public void handleStreak(){
+        if(this.gameOver == true){
+            if(this.currentRow < this.maxRow){
+                if(this.currStreak == this.maxStreak || this.maxStreak==0){
+                    this.currStreak++;
+                    this.maxStreak++;
+                }
+                else this.currStreak++;
+            }
+            else{
+                if(this.currStreak > this.maxStreak) this.maxStreak = this.currStreak;
+                this.currStreak = 0;
+            }
+        }
+    }
+
+    public int getMaxStreak() {
+        return this.maxStreak;
+    }
+
+    public int getCurrStreak() {
+        return this.currStreak;
+    }
+
+    public int getGamesPlayed() {
+        return this.gamesPlayed;
+    }
+
+    public int getTotalWins() {
+        return this.totalWins;
+    }
+
     public int getWinPercentage() {
         if (gamesPlayed == 0) return 0;
         return (totalWins * 100) / gamesPlayed;
@@ -202,7 +234,9 @@ public class GameLogic {
         }
     }
 
-
+    public int getCurrentRow() {
+        return this.currentRow;
+    }
 
     public boolean isGameOver(){
         return gameOver;

@@ -34,9 +34,12 @@ public class GameActivity extends AppCompatActivity {
     GameLogic wordle;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
-    String randomWord, currentDate, lastSavedDate;
+    String randomWord, currentDate, lastSavedDate, username;
     int gameMode;
     boolean shouldReset;
+    GuessDAO guessDAO;
+    GuessDatabase guessDatabase;
+    AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +48,14 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         Log.v("GameActivity", "started onCreate");
 
+        builder = new AlertDialog.Builder(this);
+        guessDatabase = GuessDatabase.getInstance(this);
+        guessDAO = guessDatabase.guessDao();
+
         prefs = getSharedPreferences("GuessPrefs", MODE_PRIVATE);
         editor = prefs.edit();
 
+        username = prefs.getString("current_user", "");
         gameMode = prefs.getInt("game_mode", 0);
         currentDate = new SimpleDateFormat("dd-MM-yyyy",
                 java.util.Locale.getDefault()).format(new java.util.Date());
@@ -80,8 +88,6 @@ public class GameActivity extends AppCompatActivity {
             // 2. Save the new word and today's date to memory
             editor.putString("secret_word", randomWord);
             editor.putString("last_played_date", currentDate);
-
-
 
             editor.apply();
         }
@@ -164,6 +170,48 @@ public class GameActivity extends AppCompatActivity {
     private void handleKeyPress(String key) {
         if(key.equals("ENTER")){
             wordle.submitWord();
+            if(wordle.isGameOver()==true){
+                Guess guess;
+                wordle.handleStreak();
+                int wonOrNot, row;
+                if(wordle.getCurrentRow() < 6){
+                    wonOrNot = 1;
+                    row = 1;
+                }
+                else{
+                    wonOrNot = 0;
+                    row = 0;
+                }
+                guess = new Guess(username,
+                        wordle.getCurrStreak(),
+                        wordle.getMaxStreak(),
+                        wordle.getGamesPlayed(),
+                        wordle.getTotalWins());
+
+                guessDAO.insertOrUpdate(guess);
+
+                builder.setTitle("Game Over");
+                builder.setMessage("Would you like to see your statistics or go back to the home page?");
+
+                builder.setPositiveButton("See Statistics", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(GameActivity.this, StatisticsPreviewActivity.class);
+                        startActivity(i);
+                    }
+                });
+
+                builder.setNegativeButton("Home Page", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }
         }
         else if(key.equals("DEL")){
             wordle.deleteLetter();
