@@ -3,6 +3,7 @@ package com.example.wordle;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,7 +13,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentResponse;
+
 public class StatisticsPreviewActivity extends AppCompatActivity {
+    private static final String TAG = "GeminiGeneration";
 
     TextView currStreak, maxStreak, gamesPlayed, totalWins, winPercentage, funFact;
     Button backToHomeBtn;
@@ -21,9 +26,9 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
     Guess presentedGuess;
     SharedPreferences userPrefs;
     SharedPreferences.Editor userEditor;
-    String username, currentStreakStr, maxStreakStr, gamesPlayedStr, totalWinsStr;
-    int calcPercentages;
-    StringBuilder builder;
+    String username, apiKey;
+
+    private Client client;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +38,15 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        apiKey = BuildConfig.GOOGLE_API_KEY;
+
+        if (apiKey == null || apiKey.isEmpty()) {
+            Log.w(TAG, "GOOGLE_API_KEY is empty – did you set it in local.properties?");
+        } else {
+            Log.d(TAG, "Loaded GOOGLE_API_KEY (length=" + apiKey.length() + ")");
+        }
+        client = Client.builder().apiKey(apiKey).build();
         funFact = findViewById(R.id.funFactTV);
         currStreak = findViewById(R.id.currentStreakTV);
         maxStreak = findViewById(R.id.maxStreakTV);
@@ -76,6 +90,14 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
         winPercentage.setText("Win: " +
                 calcPercentages + "%");
 
+        funFact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "Fub Fact text clicked");
+                funFact.setText("Loading fact...");
+                sendToGemini();
+            }
+        });
 
         backToHomeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,4 +108,43 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
             }
         });
     }
+    private void sendToGemini() {
+
+        final String prompt = "Give exactly one short interesting fact about Wordle.";
+
+        final String model = "gemini-2.5-flash";
+
+        new Thread(new Runnable() {
+            @Override public void run() {
+                try {
+
+                    GenerateContentResponse response =
+                            client.models.generateContent(model, prompt, null);
+
+                    final String text = response.text();
+
+                    runOnUiThread(new Runnable() {
+                        @Override public void run() {
+                            if (text != null && !text.isEmpty()) {
+                                funFact.setText(text);
+                            } else {
+                                funFact.setText("No fact received.");
+                            }
+                        }
+                    });
+
+                } catch (Exception e) {
+
+                    Log.e(TAG, "Gemini error: " + e.getMessage(), e);
+
+                    runOnUiThread(new Runnable() {
+                        @Override public void run() {
+                            funFact.setText("Error fetching fact.");
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
 }
