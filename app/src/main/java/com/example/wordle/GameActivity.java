@@ -177,6 +177,7 @@ public class GameActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i = new Intent(GameActivity.this, StatisticsPreviewActivity.class);
                         startActivity(i);
+                        finish();
                     }
                 });
 
@@ -189,7 +190,6 @@ public class GameActivity extends AppCompatActivity {
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
-                finish();
             }
         }
         else if(key.equals("DEL")){

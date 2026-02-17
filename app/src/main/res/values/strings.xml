@@ -4,6 +4,7 @@
     <!--  Source: https://wordlehints.co.uk/wordle-past-answers/  -->
     <!--  Total: 1657 words as of January 06, 2026  -->
     <string-array name="wordle_answers">
+        <item>GRUNT</item>
         <item>SHOOT</item>
         <item>PLUME</item>
         <item>LIGHT</item>
