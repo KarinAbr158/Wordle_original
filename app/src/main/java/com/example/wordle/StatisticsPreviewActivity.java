@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class StatisticsPreviewActivity extends AppCompatActivity {
 
-    TextView currStreak, maxStreak, gamesPlayed, totalWins, winPercentage;
+    TextView currStreak, maxStreak, gamesPlayed, totalWins, winPercentage, funFact;
     Button backToHomeBtn;
     GuessDatabase database;
     GuessDAO guessDAO;
@@ -33,6 +33,7 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        funFact = findViewById(R.id.funFactTV);
         currStreak = findViewById(R.id.currentStreakTV);
         maxStreak = findViewById(R.id.maxStreakTV);
         gamesPlayed = findViewById(R.id.gamesPlayedTV);

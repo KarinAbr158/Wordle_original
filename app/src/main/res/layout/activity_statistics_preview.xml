@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:text="Win percentages"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/statsToHomeBtn"
+        app:layout_constraintBottom_toTopOf="@+id/funFactTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gamesPlayedTV" />
@@ -79,6 +79,16 @@
         android:layout_height="wrap_content"
         android:text="Home Page"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/funFactTV" />
+
+    <TextView
+        android:id="@+id/funFactTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wordle Fun Fact"
+        app:layout_constraintBottom_toTopOf="@+id/statsToHomeBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/winPercentageTV" />
