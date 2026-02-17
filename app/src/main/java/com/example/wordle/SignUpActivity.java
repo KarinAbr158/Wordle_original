@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -19,7 +18,6 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_up);
         Log.v("SignupActivity", "started onCreate");
 
@@ -51,6 +49,7 @@ public class SignUpActivity extends AppCompatActivity {
                         //returns to the login page in order to log in
                         Intent i = new Intent(SignUpActivity.this, LogInActivity.class);
                         startActivity(i);
+                        finish();
                     }
                     else{
                         Toast.makeText(SignUpActivity.this, "Passwords don't match", Toast.LENGTH_SHORT).show();

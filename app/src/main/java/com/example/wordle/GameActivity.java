@@ -16,7 +16,6 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -44,7 +43,6 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_game);
         Log.v("GameActivity", "started onCreate");
 
@@ -52,7 +50,7 @@ public class GameActivity extends AppCompatActivity {
         guessDatabase = GuessDatabase.getInstance(this);
         guessDAO = guessDatabase.guessDao();
 
-        prefs = getSharedPreferences("GuessPrefs", MODE_PRIVATE);
+        prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         editor = prefs.edit();
 
         username = prefs.getString("current_user", "");
@@ -170,15 +168,7 @@ public class GameActivity extends AppCompatActivity {
     private void handleKeyPress(String key) {
         if(key.equals("ENTER")){
             wordle.submitWord();
-            if(wordle.isGameOver()==true){
-                Guess guess = new Guess(username,
-                        wordle.getCurrStreak(),
-                        wordle.getMaxStreak(),
-                        wordle.getGamesPlayed(),
-                        wordle.getTotalWins());
-
-                guessDAO.insertOrUpdate(guess);
-
+            if(wordle.isGameOver()){
                 builder.setTitle("Game Over");
                 builder.setMessage("Would you like to see your statistics or go back to the home page?");
 
@@ -199,7 +189,7 @@ public class GameActivity extends AppCompatActivity {
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
-
+                finish();
             }
         }
         else if(key.equals("DEL")){

@@ -10,7 +10,7 @@
     android:paddingTop="24dp"
     android:paddingBottom="24dp"
     android:background="#FFFFFF"
-    tools:context=".SignupActivity">
+    tools:context=".SignUpActivity">
 
     <TextView
         android:id="@+id/textView2"

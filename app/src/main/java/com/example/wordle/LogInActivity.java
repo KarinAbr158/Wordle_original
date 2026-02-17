@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LogInActivity extends AppCompatActivity {
@@ -20,7 +19,6 @@ public class LogInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_log_in);
         Log.v("LogInActivity", "started onCreate");
 
@@ -65,6 +63,7 @@ public class LogInActivity extends AppCompatActivity {
                     prefs.edit().putString("current_user", username).apply();
                     i = new Intent(LogInActivity.this, HomePageActivity.class);
                     startActivity(i);
+                    finish();
                 }
                 else if(storedPass != null && !storedPass.equals(password)) {
                     //if the username exists, but given password doesn't match said username's respective password then:

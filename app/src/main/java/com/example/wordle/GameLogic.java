@@ -24,6 +24,7 @@ public class GameLogic {
     private final int maxRow = 6,
             maxCol = 5;
     private boolean gameOver = false;
+    private boolean gameWon = false;
     private String secretWord;
     private int maxStreak,
             currStreak,
@@ -55,45 +56,6 @@ public class GameLogic {
         GRAY = ContextCompat.getColor(this.context, R.color.gray);
         WHITE = ContextCompat.getColor(this.context, R.color.white);
     }
-
-    /*public void handleStreak(){
-        if(this.gameOver == true){
-            if(this.currentRow < this.maxRow){
-                if(this.currStreak == this.maxStreak || this.maxStreak==0){
-                    this.currStreak++;
-                    this.maxStreak++;
-                }
-                else this.currStreak++;
-            }
-            else{
-                if(this.currStreak > this.maxStreak) this.maxStreak = this.currStreak;
-                this.currStreak = 0;
-            }
-        }
-    }*/
-
-    public int getMaxStreak() {
-        return this.maxStreak;
-    }
-
-    public int getCurrStreak() {
-        return this.currStreak;
-    }
-
-    public int getGamesPlayed() {
-        return this.gamesPlayed;
-    }
-
-    public int getTotalWins() {
-        return this.totalWins;
-    }
-
-    public int getWinPercentage() {
-        if (gamesPlayed == 0) return 0;
-        return (totalWins * 100) / gamesPlayed;
-    }
-
-
 
     public void addLetter(String letter){
         if(gameOver) return;
@@ -137,20 +99,14 @@ public class GameLogic {
 
             if(guess.equals(secretWord)) {
                 gameOver = true;
+                gameWon = true;
                 Toast.makeText(context, "Splendid!", Toast.LENGTH_SHORT).show();
-                handleGameEnd(); // Clear specific keys
-                this.totalWins++;
-                this.gamesPlayed++;
-                this.currStreak++;
-                if(this.maxStreak<this.currStreak){
-                    this.maxStreak = this.currStreak;
-                }
+                handleGameEnd();
             } else if(currentRow == 5) {
                 gameOver = true;
+                gameWon = false;
                 Toast.makeText(context, "Game Over! The word was: " + secretWord, Toast.LENGTH_LONG).show();
-                handleGameEnd(); // Clear specific keys
-                this.gamesPlayed++;
-                this.currStreak = 0;
+                handleGameEnd();
             } else {
                 currentRow++;
                 currentCol = 0;
@@ -161,17 +117,53 @@ public class GameLogic {
         }
     }
 
-    private void handleGameEnd() {
+    private void handleGameEnd(){
+        GuessDatabase guessDatabase = GuessDatabase.getInstance(context);
+        GuessDAO guessDAO = guessDatabase.guessDao();
         //get the specific preferences file
-        SharedPreferences prefs = context.getSharedPreferences("GuessPrefs", Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
+
+        String username = prefs.getString("current_user", "");
+
+        // Load existing stats so we accumulate instead of resetting
+        Guess existing = guessDAO.getStats(username);
+        if (existing != null) {
+            this.gamesPlayed = existing.getGamesPlayed();
+            this.totalWins = existing.getTotalWins();
+            this.currStreak = existing.getCurrentStreak();
+            this.maxStreak = existing.getMaxStreak();
+        }
+
+        // Apply the result of this game
+        this.gamesPlayed++;
+        if (gameWon) {
+            this.totalWins++;
+            this.currStreak++;
+            if (this.maxStreak < this.currStreak) {
+                this.maxStreak = this.currStreak;
+            }
+        } else {
+            this.currStreak = 0;
+        }
+
+        Guess updatedStats = new Guess(username,
+                this.currStreak,
+                this.maxStreak,
+                this.gamesPlayed,
+                this.totalWins);
+
+        if (existing != null) {
+            guessDAO.update(updatedStats);
+        } else {
+            guessDAO.insert(updatedStats);
+        }
 
         //remove the secret word so a new game can start
         editor.remove("secret_word");
         //doesn't clear everything, because it's needs to save "last_played_date"
         //for the 24-hour mode check in HomePageActivity.
         editor.apply();
-        //handleStreak();
     }
 
 
