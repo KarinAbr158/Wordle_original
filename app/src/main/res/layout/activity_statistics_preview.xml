@@ -5,6 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:padding="24dp"
     tools:context=".StatisticsPreviewActivity">
 
     <TextView
@@ -12,7 +14,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Statistics"
-        android:textSize="40sp"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textColor="@color/dark_text"
         app:layout_constraintBottom_toTopOf="@+id/currentStreakTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Current streak"
-        android:textSize="20sp"
+        android:textSize="18sp"
+        android:textColor="@color/dark_text"
         app:layout_constraintBottom_toTopOf="@+id/gamesPlayedTV"
         app:layout_constraintEnd_toStartOf="@+id/maxStreakTV"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +39,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Max streak"
-        android:textSize="20sp"
+        android:textSize="18sp"
+        android:textColor="@color/dark_text"
         app:layout_constraintBottom_toTopOf="@+id/totalWinsTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/currentStreakTV"
@@ -45,7 +51,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Games played"
-        android:textSize="20sp"
+        android:textSize="18sp"
+        android:textColor="@color/dark_text"
         app:layout_constraintBottom_toTopOf="@+id/winPercentageTV"
         app:layout_constraintEnd_toStartOf="@+id/totalWinsTV"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,7 +63,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Total wins"
-        android:textSize="20sp"
+        android:textSize="18sp"
+        android:textColor="@color/dark_text"
         app:layout_constraintBottom_toTopOf="@+id/winPercentageTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/gamesPlayedTV"
@@ -67,29 +75,39 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Win percentages"
-        android:textSize="20sp"
+        android:textSize="18sp"
+        android:textColor="@color/text_muted"
         app:layout_constraintBottom_toTopOf="@+id/funFactTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gamesPlayedTV" />
-
-    <Button
-        android:id="@+id/statsToHomeBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Home Page"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/funFactTV" />
 
     <TextView
         android:id="@+id/funFactTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Wordle Fun Fact"
+        android:textSize="16sp"
+        android:textColor="@color/text_muted"
+        android:textStyle="italic"
         app:layout_constraintBottom_toTopOf="@+id/statsToHomeBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/winPercentageTV" />
+
+    <Button
+        android:id="@+id/statsToHomeBtn"
+        android:layout_width="240dp"
+        android:layout_height="52dp"
+        android:background="@drawable/btn_primary"
+        android:text="Home Page"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/funFactTV" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -38,7 +38,6 @@ public class GameActivity extends AppCompatActivity implements GameListener {
 
     private LinearLayout row1, row2, row3;
     private TextView[][] cells = new TextView[6][5];
-    private int GREEN, YELLOW, GRAY, WHITE;
 
     final int rows = 6;
     final int cols = 5;
@@ -59,11 +58,7 @@ public class GameActivity extends AppCompatActivity implements GameListener {
         Log.v("GameActivity", "started idle timer");
         startIdleTimer();
 
-        // Load colors from resources
-        GREEN = ContextCompat.getColor(this, R.color.green);
-        YELLOW = ContextCompat.getColor(this, R.color.yellow);
-        GRAY = ContextCompat.getColor(this, R.color.gray);
-        WHITE = ContextCompat.getColor(this, R.color.white);
+        // Colors are now handled via drawable resources (tile_green, tile_yellow, etc.)
 
         builder = new AlertDialog.Builder(this);
 
@@ -169,8 +164,11 @@ public class GameActivity extends AppCompatActivity implements GameListener {
             Button b = new Button(this);
             b.setText(text);
             b.setAllCaps(true);
-            b.setTextSize(18);
+            b.setTextSize(14);
             b.setTypeface(null, Typeface.BOLD);
+            b.setBackgroundResource(R.drawable.key_bg);
+            b.setTextColor(ContextCompat.getColor(this, R.color.dark_text));
+            b.setStateListAnimator(null); // Remove default elevation shadow
 
             LinearLayout.LayoutParams p =
                     new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -185,13 +183,11 @@ public class GameActivity extends AppCompatActivity implements GameListener {
                 p.weight = 3;
             }
 
-            if(text.equals("⏎") || text.equals("⌫")){
-                p.setMargins(0, 4, 0, 4);
-            }
-            else{
-                p.setMargins(1, 4, 1, 4);
-            }
+            p.setMargins(2, 4, 2, 4);
             b.setLayoutParams(p);
+            b.setPadding(0, 16, 0, 16);
+            b.setMinWidth(0);
+            b.setMinimumWidth(0);
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -231,17 +227,20 @@ public class GameActivity extends AppCompatActivity implements GameListener {
     @Override
     public void onLetterAdded(int row, int col, String letter) {
         cells[row][col].setText(letter);
+        cells[row][col].setBackgroundResource(R.drawable.tile_filled);
     }
 
     @Override
     public void onLetterDeleted(int row, int col) {
         cells[row][col].setText("");
+        cells[row][col].setBackgroundResource(R.drawable.tile_empty);
     }
 
     @Override
     public void onTileResult(int row, int col, int colorType) {
         TextView tile = cells[row][col];
-        tile.setBackgroundColor(mapColor(colorType));
+        tile.setBackgroundResource(mapColorDrawable(colorType));
+        tile.setTextColor(ContextCompat.getColor(this, R.color.white));
 
         // Pop animation
         tile.setScaleX(0f);
@@ -260,15 +259,15 @@ public class GameActivity extends AppCompatActivity implements GameListener {
 
     @Override
     public void onKeyColorUpdate(char letter, int colorType) {
-        int color = mapColor(colorType);
+        int drawableRes = mapColorDrawable(colorType);
         LinearLayout[] keyboardRows = {row1, row2, row3};
 
         for(LinearLayout row : keyboardRows){
             for(int i = 0; i < row.getChildCount(); i++){
                 Button b = (Button) row.getChildAt(i);
                 if (b.getText().length() == 1 && b.getText().charAt(0) == letter){
-                    b.setBackgroundColor(color);
-                    b.setTextColor(WHITE); //so you see it better against the dark background
+                    b.setBackgroundResource(drawableRes);
+                    b.setTextColor(ContextCompat.getColor(this, R.color.white));
                 }
             }
         }
@@ -295,13 +294,13 @@ public class GameActivity extends AppCompatActivity implements GameListener {
     //          Helper Methods
     // =============================================
 
-    /** Maps a GameLogic color constant to an actual Android color */
-    private int mapColor(int colorType) {
+    /** Maps a GameLogic color constant to a drawable resource ID */
+    private int mapColorDrawable(int colorType) {
         switch (colorType) {
-            case GameLogic.COLOR_GREEN:  return GREEN;
-            case GameLogic.COLOR_YELLOW: return YELLOW;
-            case GameLogic.COLOR_GRAY:   return GRAY;
-            default:                     return WHITE;
+            case GameLogic.COLOR_GREEN:  return R.drawable.tile_green;
+            case GameLogic.COLOR_YELLOW: return R.drawable.tile_yellow;
+            case GameLogic.COLOR_GRAY:   return R.drawable.tile_gray;
+            default:                     return R.drawable.tile_empty;
         }
     }
 

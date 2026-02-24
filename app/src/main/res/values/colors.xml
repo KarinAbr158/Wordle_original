@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="gray">#FF787C7E</color>
-    <color name="yellow">#FFC9B458</color>
+    <color name="light_gray_bg">#F6F7F8</color>
+    <color name="tile_border">#D3D6DA</color>
+    <color name="tile_filled_border">#878A8C</color>
     <color name="green">#FF6AAA64</color>
+    <color name="yellow">#FFC9B458</color>
+    <color name="gray">#FF787C7E</color>
+    <color name="key_bg">#D3D6DA</color>
+    <color name="dark_text">#1A1A1B</color>
+    <color name="text_muted">#787C7E</color>
+    <color name="accent_green">#6AAA64</color>
+    <color name="accent_green_pressed">#5A9A54</color>
 </resources>
