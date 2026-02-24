@@ -111,7 +111,6 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
     private void sendToGemini() {
 
         final String prompt = "Give exactly one short interesting fact about Wordle.";
-
         final String model = "gemini-2.5-flash";
 
         new Thread(new Runnable() {

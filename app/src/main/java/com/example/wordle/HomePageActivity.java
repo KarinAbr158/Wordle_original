@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 public class HomePageActivity extends AppCompatActivity {
 
     Button startGame, settings, exit;
-    Intent i;
+    Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +36,8 @@ public class HomePageActivity extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                intent = new Intent(HomePageActivity.this, LogInActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -67,8 +69,8 @@ public class HomePageActivity extends AppCompatActivity {
                     //remove the word so GameActivity picks a new one
                     prefs.edit().remove("secret_word").apply();
 
-                    i = new Intent(HomePageActivity.this, GameActivity.class);
-                    startActivity(i);
+                    intent = new Intent(HomePageActivity.this, GameActivity.class);
+                    startActivity(intent);
                 }
             });
         }
@@ -93,8 +95,8 @@ public class HomePageActivity extends AppCompatActivity {
                             Toast.makeText(HomePageActivity.this, "Mode: New word every 24 hours", Toast.LENGTH_SHORT).show();
                         }
                         else if(item.getTitle().equals("See Personal Statistics")){
-                            i = new Intent(HomePageActivity.this, StatisticsPreviewActivity.class);
-                            startActivity(i);
+                            intent = new Intent(HomePageActivity.this, StatisticsPreviewActivity.class);
+                            startActivity(intent);
                         }
                         return true;
                     }

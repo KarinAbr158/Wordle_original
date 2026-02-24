@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +30,15 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
+    private static final long IDLE_TIMEOUT = 25000; // 25 seconds
+    private final Handler idleHandler = new Handler(Looper.getMainLooper());
+    private final Runnable idleRunnable = new Runnable() {
+        @Override
+        public void run() {
+            onUserIdle();
+        }
+    };
+
     private LinearLayout row1, row2, row3;
     private TextView[][] cells = new TextView[6][5];
     GameLogic wordle;
@@ -45,6 +56,8 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         Log.v("GameActivity", "started onCreate");
+        Log.v("GameActivity", "started idle timer");
+        startIdleTimer();
 
         builder = new AlertDialog.Builder(this);
         guessDatabase = GuessDatabase.getInstance(this);
@@ -100,6 +113,35 @@ public class GameActivity extends AppCompatActivity {
         addKeys(row1, new String[]{"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"});
         addKeys(row2, new String[]{"A", "S", "D", "F", "G", "H", "J", "K", "L"});
         addKeys(row3, new String[]{"⏎", "Z", "X", "C", "V", "B", "N", "M", "⌫"});
+    }
+
+    @Override
+    public void onUserInteraction() {
+        super.onUserInteraction();
+        resetIdleTimer();
+    }
+    @Override
+    protected void onPause() { //Prevents memory leaks
+        super.onPause();
+        idleHandler.removeCallbacks(idleRunnable);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startIdleTimer();
+    }
+
+    private void startIdleTimer() {
+        idleHandler.postDelayed(idleRunnable, IDLE_TIMEOUT);
+    }
+
+    private void resetIdleTimer() {
+        idleHandler.removeCallbacks(idleRunnable);
+        idleHandler.postDelayed(idleRunnable, IDLE_TIMEOUT);
+    }
+
+    private void onUserIdle() {
+        Toast.makeText(this, "You awake? Do something!", Toast.LENGTH_SHORT).show();
     }
 
     private void wordGrid() {
@@ -169,6 +211,8 @@ public class GameActivity extends AppCompatActivity {
         if(key.equals("ENTER")){
             wordle.submitWord();
             if(wordle.isGameOver()){
+                idleHandler.removeCallbacks(idleRunnable);
+
                 builder.setTitle("Game Over");
                 builder.setMessage("Would you like to see your statistics or go back to the home page?");
 
