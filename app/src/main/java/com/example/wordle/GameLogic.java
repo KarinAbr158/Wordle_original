@@ -169,35 +169,67 @@ public class GameLogic {
 
     private void checkGuess(String guess){
         boolean[] used = new boolean[maxCol];
-        //Green letters
+
+        // Green letters
         for(int i = 0; i < used.length; i++){
             if(guess.charAt(i) == secretWord.charAt(i)){
-                cells[currentRow][i].setBackgroundColor(GREEN);
-                colorKey(guess.charAt(i), GREEN);
+                TextView tile = cells[currentRow][i];
+                tile.setBackgroundColor(GREEN);
+                colorKey(guess.charAt(i), GREEN); // keyboard update
                 used[i] = true;
+
+                // Pop animation
+                tile.setScaleX(0f);
+                tile.setScaleY(0f);
+                tile.animate()
+                        .scaleX(1.2f)
+                        .scaleY(1.2f)
+                        .setDuration(150)
+                        .withEndAction(() -> tile.animate()
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setDuration(100)
+                        )
+                        .start();
             }
         }
-        //Yellow/Gray letters
+
+        // Yellow / Gray letters
         for(int i = 0; i < used.length; i++){
             int currentColor = ((ColorDrawable)cells[currentRow][i].getBackground()).getColor();
             if(currentColor != GREEN){
                 boolean found = false;
                 for(int j = 0; j < used.length; j++){
                     if(!used[j] && guess.charAt(i) == secretWord.charAt(j)){
-                        //if it's not green, but it is in part of the secret word, then colours it yellow
                         found = true;
                         used[j] = true;
-                        j=used.length;
+                        j = used.length;
                     }
                 }
+
+                TextView tile = cells[currentRow][i];
+
                 if(found){
-                    cells[currentRow][i].setBackgroundColor(YELLOW);
+                    tile.setBackgroundColor(YELLOW);
                     colorKey(guess.charAt(i), YELLOW);
-                }
-                else{
-                    cells[currentRow][i].setBackgroundColor(GRAY);
+                } else {
+                    tile.setBackgroundColor(GRAY);
                     colorKey(guess.charAt(i), GRAY);
                 }
+
+                // Pop animation for yellow/gray tiles
+                tile.setScaleX(0f);
+                tile.setScaleY(0f);
+                tile.animate()
+                        .scaleX(1.2f)
+                        .scaleY(1.2f)
+                        .setDuration(150)
+                        .withEndAction(() -> tile.animate()
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setDuration(100)
+                        )
+                        .start();
             }
         }
     }
