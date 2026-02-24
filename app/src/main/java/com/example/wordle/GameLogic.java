@@ -1,22 +1,25 @@
 package com.example.wordle;
 
 import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.content.Context;
-import android.widget.Toast;
-
-import androidx.core.content.ContextCompat;
 
 import java.util.HashMap;
 
+/**
+ * Handles all Wordle game logic: letter input, guess validation,
+ * color-checking algorithm, and statistics persistence.
+ * Does NOT touch any UI elements — communicates via GameListener.
+ */
 public class GameLogic {
+
+    public static final int COLOR_GREEN = 0;
+    public static final int COLOR_YELLOW = 1;
+    public static final int COLOR_GRAY = 2;
+
     private Context context;
-    private TextView[][] cells;
-    private LinearLayout row1, row2, row3;
+    private GameListener listener;
     private HashMap<Character, Integer> keyColors = new HashMap<>();
+    private String[][] grid;
     private String[] savedGuess, allWordsPossible;
 
     private int currentRow = 0,
@@ -31,18 +34,18 @@ public class GameLogic {
             gamesPlayed,
             totalWins;
 
-    private final int GREEN, YELLOW, GRAY, WHITE;
-
-    public GameLogic(Context context, TextView[][] cells,
-                     LinearLayout row1, LinearLayout row2, LinearLayout row3,
+    public GameLogic(Context context, GameListener listener,
                      String secretWord, String[] allWords) {
         this.context = context;
-        this.cells = cells;
-        this.row1 = row1;
-        this.row2 = row2;
-        this.row3 = row3;
+        this.listener = listener;
         this.secretWord = secretWord;
         this.allWordsPossible = allWords;
+
+        this.grid = new String[maxRow][maxCol];
+        for (int r = 0; r < maxRow; r++)
+            for (int c = 0; c < maxCol; c++)
+                grid[r][c] = "";
+
         this.savedGuess = new String[6];
         for(int i = 0; i < this.savedGuess.length; i++){
             this.savedGuess[i] = "";
@@ -51,16 +54,14 @@ public class GameLogic {
         this.currStreak = 0;
         this.gamesPlayed = 0;
         this.totalWins = 0;
-        GREEN = ContextCompat.getColor(this.context, R.color.green);
-        YELLOW = ContextCompat.getColor(this.context, R.color.yellow);
-        GRAY = ContextCompat.getColor(this.context, R.color.gray);
-        WHITE = ContextCompat.getColor(this.context, R.color.white);
     }
 
     public void addLetter(String letter){
         if(gameOver) return;
         if(currentCol < maxCol){
-            cells[currentRow][currentCol].setText(letter.toUpperCase());
+            String upper = letter.toUpperCase();
+            grid[currentRow][currentCol] = upper;
+            listener.onLetterAdded(currentRow, currentCol, upper);
             currentCol++;
         }
     }
@@ -69,7 +70,8 @@ public class GameLogic {
         if(gameOver) return;
         if(currentCol > 0){
             currentCol--;
-            cells[currentRow][currentCol].setText("");
+            grid[currentRow][currentCol] = "";
+            listener.onLetterDeleted(currentRow, currentCol);
         }
     }
 
@@ -87,12 +89,11 @@ public class GameLogic {
         if(currentCol < maxCol) return;
 
         StringBuilder guessBuilder = new StringBuilder();
-        for(int i = 0; i < 5; i++){
-            guessBuilder.append(cells[currentRow][i].getText().toString());
+        for(int i = 0; i < maxCol; i++){
+            guessBuilder.append(grid[currentRow][i]);
         }
-        String guess = guessBuilder.toString();
+        String guess = guessBuilder.toString().toUpperCase();
 
-        guess = guess.toUpperCase();
         if(isInArray(guess)) {
             this.savedGuess[this.currentRow] = guess;
             checkGuess(guess);
@@ -100,20 +101,20 @@ public class GameLogic {
             if(guess.equals(secretWord)) {
                 gameOver = true;
                 gameWon = true;
-                Toast.makeText(context, "Splendid!", Toast.LENGTH_SHORT).show();
                 handleGameEnd();
+                listener.onGameWon();
             } else if(currentRow == 5) {
                 gameOver = true;
                 gameWon = false;
-                Toast.makeText(context, "Game Over! The word was: " + secretWord, Toast.LENGTH_LONG).show();
                 handleGameEnd();
+                listener.onGameLost(secretWord);
             } else {
                 currentRow++;
                 currentCol = 0;
             }
         }
         else{
-            Toast.makeText(context, "Not in word list", Toast.LENGTH_SHORT).show();
+            listener.onInvalidWord();
         }
     }
 
@@ -161,102 +162,74 @@ public class GameLogic {
 
         //remove the secret word so a new game can start
         editor.remove("secret_word");
-        //doesn't clear everything, because it's needs to save "last_played_date"
-        //for the 24-hour mode check in HomePageActivity.
         editor.apply();
     }
 
 
+    /**
+     * Checks the player's guess against the secret word.
+     * Determines GREEN (correct position), YELLOW (wrong position),
+     * or GRAY (not in word) for each letter, then notifies the listener.
+     */
     private void checkGuess(String guess){
         boolean[] used = new boolean[maxCol];
+        int[] results = new int[maxCol];
+        for (int i = 0; i < maxCol; i++) results[i] = -1;
 
-        // Green letters
-        for(int i = 0; i < used.length; i++){
+        // Green letters — correct letter in correct position
+        for(int i = 0; i < maxCol; i++){
             if(guess.charAt(i) == secretWord.charAt(i)){
-                TextView tile = cells[currentRow][i];
-                tile.setBackgroundColor(GREEN);
-                colorKey(guess.charAt(i), GREEN); // keyboard update
+                results[i] = COLOR_GREEN;
+                updateKeyColor(guess.charAt(i), COLOR_GREEN);
                 used[i] = true;
-
-                // Pop animation
-                tile.setScaleX(0f);
-                tile.setScaleY(0f);
-                tile.animate()
-                        .scaleX(1.2f)
-                        .scaleY(1.2f)
-                        .setDuration(150)
-                        .withEndAction(() -> tile.animate()
-                                .scaleX(1f)
-                                .scaleY(1f)
-                                .setDuration(100)
-                        )
-                        .start();
             }
         }
 
         // Yellow / Gray letters
-        for(int i = 0; i < used.length; i++){
-            int currentColor = ((ColorDrawable)cells[currentRow][i].getBackground()).getColor();
-            if(currentColor != GREEN){
+        for(int i = 0; i < maxCol; i++){
+            if(results[i] != COLOR_GREEN){
                 boolean found = false;
-                for(int j = 0; j < used.length; j++){
+                for(int j = 0; j < maxCol; j++){
                     if(!used[j] && guess.charAt(i) == secretWord.charAt(j)){
                         found = true;
                         used[j] = true;
-                        j = used.length;
+                        break;
                     }
                 }
 
-                TextView tile = cells[currentRow][i];
-
                 if(found){
-                    tile.setBackgroundColor(YELLOW);
-                    colorKey(guess.charAt(i), YELLOW);
+                    results[i] = COLOR_YELLOW;
+                    updateKeyColor(guess.charAt(i), COLOR_YELLOW);
                 } else {
-                    tile.setBackgroundColor(GRAY);
-                    colorKey(guess.charAt(i), GRAY);
+                    results[i] = COLOR_GRAY;
+                    updateKeyColor(guess.charAt(i), COLOR_GRAY);
                 }
-
-                // Pop animation for yellow/gray tiles
-                tile.setScaleX(0f);
-                tile.setScaleY(0f);
-                tile.animate()
-                        .scaleX(1.2f)
-                        .scaleY(1.2f)
-                        .setDuration(150)
-                        .withEndAction(() -> tile.animate()
-                                .scaleX(1f)
-                                .scaleY(1f)
-                                .setDuration(100)
-                        )
-                        .start();
             }
+        }
+
+        // Notify listener of all tile results
+        for (int i = 0; i < maxCol; i++) {
+            listener.onTileResult(currentRow, i, results[i]);
         }
     }
 
-    private void colorKey(char letter, int color) {
+    /**
+     * Updates the keyboard color for a letter, respecting priority:
+     * GREEN > YELLOW > GRAY (a key never downgrades).
+     */
+    private void updateKeyColor(char letter, int colorType) {
         letter = Character.toUpperCase(letter);
         //GREEN > YELLOW > GRAY
         if(!this.keyColors.containsKey(letter)){
-            this.keyColors.put(letter, color);
+            this.keyColors.put(letter, colorType);
         }
         else{
             int oldColor = this.keyColors.get(letter);
-            if (oldColor == GREEN) return;
-            if (oldColor == YELLOW && color == GRAY) return;
-            this.keyColors.put(letter, color);
+            if (oldColor == COLOR_GREEN) return;
+            if (oldColor == COLOR_YELLOW && colorType == COLOR_GRAY) return;
+            this.keyColors.put(letter, colorType);
         }
-        LinearLayout[] rows = {row1, row2, row3};
-
-        for(LinearLayout row:rows){
-            for(int i = 0; i < row.getChildCount(); i++){
-                Button b = (Button)row.getChildAt(i);
-                if (b.getText().length() == 1 && b.getText().charAt(0) == letter){
-                    b.setBackgroundColor(color);
-                    b.setTextColor(WHITE);//so you see it better against the dark background
-                }
-            }
-        }
+        listener.onKeyColorUpdate(letter, colorType);
     }
 
     public int getCurrentRow() {

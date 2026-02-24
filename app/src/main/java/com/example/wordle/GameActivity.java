@@ -1,35 +1,31 @@
 package com.example.wordle;
 
-import android.animation.ObjectAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity {
+/**
+ * Main game screen. Handles all UI: grid display, keyboard,
+ * animations, dialogs. Receives game events via GameListener.
+ */
+public class GameActivity extends AppCompatActivity implements GameListener {
 
     private static final long IDLE_TIMEOUT = 25000; // 25 seconds
     private final Handler idleHandler = new Handler(Looper.getMainLooper());
@@ -42,6 +38,7 @@ public class GameActivity extends AppCompatActivity {
 
     private LinearLayout row1, row2, row3;
     private TextView[][] cells = new TextView[6][5];
+    private int GREEN, YELLOW, GRAY, WHITE;
 
     final int rows = 6;
     final int cols = 5;
@@ -52,8 +49,6 @@ public class GameActivity extends AppCompatActivity {
     String randomWord, currentDate, lastSavedDate, username;
     int gameMode;
     boolean shouldReset;
-    GuessDAO guessDAO;
-    GuessDatabase guessDatabase;
     AlertDialog.Builder builder;
 
     @Override
@@ -64,9 +59,13 @@ public class GameActivity extends AppCompatActivity {
         Log.v("GameActivity", "started idle timer");
         startIdleTimer();
 
+        // Load colors from resources
+        GREEN = ContextCompat.getColor(this, R.color.green);
+        YELLOW = ContextCompat.getColor(this, R.color.yellow);
+        GRAY = ContextCompat.getColor(this, R.color.gray);
+        WHITE = ContextCompat.getColor(this, R.color.white);
+
         builder = new AlertDialog.Builder(this);
-        guessDatabase = GuessDatabase.getInstance(this);
-        guessDAO = guessDatabase.guessDao();
 
         prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         editor = prefs.edit();
@@ -113,7 +112,7 @@ public class GameActivity extends AppCompatActivity {
         row3 = findViewById(R.id.row3);
 
         wordGrid();
-        wordle = new GameLogic(GameActivity.this, cells, row1, row2, row3, randomWord, allWords);
+        wordle = new GameLogic(GameActivity.this, this, randomWord, allWords);
 
         addKeys(row1, new String[]{"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"});
         addKeys(row2, new String[]{"A", "S", "D", "F", "G", "H", "J", "K", "L"});
@@ -215,31 +214,7 @@ public class GameActivity extends AppCompatActivity {
     private void handleKeyPress(String key) {
         if(key.equals("ENTER")){
             wordle.submitWord();
-            if(wordle.isGameOver()){
-                idleHandler.removeCallbacks(idleRunnable);
-
-                builder.setTitle("Game Over");
-                builder.setMessage("Would you like to see your statistics or go back to the home page?");
-
-                builder.setPositiveButton("See Statistics", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent(GameActivity.this, StatisticsPreviewActivity.class);
-                        startActivity(i);
-                        finish();
-                    }
-                });
-
-                builder.setNegativeButton("Home Page", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
+            // Game over is now handled via onGameWon / onGameLost callbacks
         }
         else if(key.equals("DEL")){
             wordle.deleteLetter();
@@ -247,5 +222,113 @@ public class GameActivity extends AppCompatActivity {
         else{
             wordle.addLetter(key);
         }
+    }
+
+    // =============================================
+    //          GameListener Callbacks
+    // =============================================
+
+    @Override
+    public void onLetterAdded(int row, int col, String letter) {
+        cells[row][col].setText(letter);
+    }
+
+    @Override
+    public void onLetterDeleted(int row, int col) {
+        cells[row][col].setText("");
+    }
+
+    @Override
+    public void onTileResult(int row, int col, int colorType) {
+        TextView tile = cells[row][col];
+        tile.setBackgroundColor(mapColor(colorType));
+
+        // Pop animation
+        tile.setScaleX(0f);
+        tile.setScaleY(0f);
+        tile.animate()
+                .scaleX(1.2f)
+                .scaleY(1.2f)
+                .setDuration(150)
+                .withEndAction(() -> tile.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(100)
+                )
+                .start();
+    }
+
+    @Override
+    public void onKeyColorUpdate(char letter, int colorType) {
+        int color = mapColor(colorType);
+        LinearLayout[] keyboardRows = {row1, row2, row3};
+
+        for(LinearLayout row : keyboardRows){
+            for(int i = 0; i < row.getChildCount(); i++){
+                Button b = (Button) row.getChildAt(i);
+                if (b.getText().length() == 1 && b.getText().charAt(0) == letter){
+                    b.setBackgroundColor(color);
+                    b.setTextColor(WHITE); //so you see it better against the dark background
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onGameWon() {
+        Toast.makeText(this, "Splendid!", Toast.LENGTH_SHORT).show();
+        showGameOverDialog();
+    }
+
+    @Override
+    public void onGameLost(String secretWord) {
+        Toast.makeText(this, "Game Over! The word was: " + secretWord, Toast.LENGTH_LONG).show();
+        showGameOverDialog();
+    }
+
+    @Override
+    public void onInvalidWord() {
+        Toast.makeText(this, "Not in word list", Toast.LENGTH_SHORT).show();
+    }
+
+    // =============================================
+    //          Helper Methods
+    // =============================================
+
+    /** Maps a GameLogic color constant to an actual Android color */
+    private int mapColor(int colorType) {
+        switch (colorType) {
+            case GameLogic.COLOR_GREEN:  return GREEN;
+            case GameLogic.COLOR_YELLOW: return YELLOW;
+            case GameLogic.COLOR_GRAY:   return GRAY;
+            default:                     return WHITE;
+        }
+    }
+
+    /** Shows the end-of-game dialog with options to view stats or go home */
+    private void showGameOverDialog() {
+        idleHandler.removeCallbacks(idleRunnable);
+
+        builder.setTitle("Game Over");
+        builder.setMessage("Would you like to see your statistics or go back to the home page?");
+
+        builder.setPositiveButton("See Statistics", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i = new Intent(GameActivity.this, StatisticsPreviewActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
+        builder.setNegativeButton("Home Page", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

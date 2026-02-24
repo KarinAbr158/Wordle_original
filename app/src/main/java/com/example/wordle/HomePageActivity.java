@@ -42,7 +42,7 @@ public class HomePageActivity extends AppCompatActivity {
             }
         });
 
-        SharedPreferences prefs = getSharedPreferences("GuessPrefs", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         //Check if an ongoing game exists
         //boolean hasOngoingGame = prefs.getString("secret_word", null) != null;
         //Check 24-hour mode status
@@ -53,12 +53,7 @@ public class HomePageActivity extends AppCompatActivity {
 
         // START GAME BUTTON LOGIC
         //Disabled if: 24h mode AND played today
-        if (gameMode == 1 && alreadyPlayedToday) {
-            startGame.setEnabled(false);
-            startGame.setAlpha(0.3f);
-            startGame.setText("Next Word Tomorrow");
-        }
-        else{
+        if (gameMode == 0){
             startGame.setEnabled(true);
             startGame.setAlpha(1.0f);
             startGame.setText("Start New Game");
@@ -89,10 +84,30 @@ public class HomePageActivity extends AppCompatActivity {
                         if(item.getTitle().equals("Every Game Mode")) {
                             prefs.edit().putInt("game_mode", 0).apply();
                             Toast.makeText(HomePageActivity.this, "Mode: New word every game", Toast.LENGTH_SHORT).show();
+
+                            startGame.setEnabled(true);
+                            startGame.setAlpha(1.0f);
+                            startGame.setText("Start New Game");
+                            startGame.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    //Only clear if isn't loading
+                                    //remove the word so GameActivity picks a new one
+                                    prefs.edit().remove("secret_word").apply();
+
+                                    intent = new Intent(HomePageActivity.this, GameActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
                         }
                         else if(item.getTitle().equals("Daily (24h) Mode")){
                             prefs.edit().putInt("game_mode", 1).apply();
                             Toast.makeText(HomePageActivity.this, "Mode: New word every 24 hours", Toast.LENGTH_SHORT).show();
+                            if(alreadyPlayedToday) {
+                                startGame.setEnabled(false);
+                                startGame.setAlpha(0.3f);
+                                startGame.setText("Next Word Tomorrow");
+                            }
                         }
                         else if(item.getTitle().equals("See Personal Statistics")){
                             intent = new Intent(HomePageActivity.this, StatisticsPreviewActivity.class);
@@ -104,5 +119,7 @@ public class HomePageActivity extends AppCompatActivity {
                 popup.show();
             }
         });
+
+
     }
 }

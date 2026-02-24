@@ -4,6 +4,10 @@
     <!--  Source: https://wordlehints.co.uk/wordle-past-answers/  -->
     <!--  Total: 1657 words as of January 06, 2026  -->
     <string-array name="wordle_answers">
+        <item>ASHES</item>
+        <item>ASPEN</item>
+        <item>ALLEY</item>
+        <item>CRAZY</item>
         <item>WORLD</item>
         <item>GRUNT</item>
         <item>SHOOT</item>
