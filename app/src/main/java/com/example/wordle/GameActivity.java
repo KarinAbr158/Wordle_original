@@ -1,5 +1,6 @@
 package com.example.wordle;
 
+import android.animation.ObjectAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +42,10 @@ public class GameActivity extends AppCompatActivity {
 
     private LinearLayout row1, row2, row3;
     private TextView[][] cells = new TextView[6][5];
+
+    final int rows = 6;
+    final int cols = 5;
+
     GameLogic wordle;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
@@ -145,8 +150,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void wordGrid() {
-        for(int r = 0; r < 6; r++) {
-            for(int c = 0; c < 5; c++) {
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < cols; c++) {
                 int id = getResources().getIdentifier(
                         "cell_" + (r + 1) + "_" + (c + 1),
                         "id",
