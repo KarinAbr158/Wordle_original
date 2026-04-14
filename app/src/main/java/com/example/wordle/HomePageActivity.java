@@ -84,7 +84,6 @@ public class HomePageActivity extends AppCompatActivity {
                         if(item.getTitle().equals("Every Game Mode")) {
                             prefs.edit().putInt("game_mode", 0).apply();
                             Toast.makeText(HomePageActivity.this, "Mode: New word every game", Toast.LENGTH_SHORT).show();
-
                             startGame.setEnabled(true);
                             startGame.setAlpha(1.0f);
                             startGame.setText("Start New Game");
