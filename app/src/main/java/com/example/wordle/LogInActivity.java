@@ -16,6 +16,13 @@ public class LogInActivity extends AppCompatActivity {
     Button signup, login;
     SharedPreferences prefs;
     Intent i;
+    /**
+     * פעולה הנקראת בעת יצירת ה-Activity. מאתחלת את שדות הקלט והכפתורים,
+     * ומגדירה את לוגיקת האימות (Login) והמעבר להרשמה (SignUp).
+     * 
+     * טענת כניסה: מצב שמור של האפליקציה (savedInstanceState).
+     * טענת יציאה: רכיבי ה-UI מקושרים, ומאזיני הלחיצה בודקים את פרטי המשתמש מול ה-SharedPreferences.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

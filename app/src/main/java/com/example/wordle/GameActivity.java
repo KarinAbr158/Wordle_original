@@ -50,6 +50,13 @@ public class GameActivity extends AppCompatActivity implements GameListener {
     boolean shouldReset;
     AlertDialog.Builder builder;
 
+    /**
+     * פעולה הנקראת בעת יצירת ה-Activity. מאתחלת את ממשק המשתמש, הטיימרים,
+     * טוענת נתונים מה-SharedPreferences ומגדירה את לוגיקת המילים.
+     * 
+     * טענת כניסה: מצב שמור של האפליקציה (savedInstanceState).
+     * טענת יציאה: המסך מוכן למשחק, הלוגיקה והמקלדת מאותחלות.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,35 +121,78 @@ public class GameActivity extends AppCompatActivity implements GameListener {
         addKeys(row3, new String[]{"⏎", "Z", "X", "C", "V", "B", "N", "M", "⌫"});
     }
 
+    /**
+     * נקראת בכל פעם שהמשתמש מבצע אינטראקציה עם המסך.
+     * משמשת לאיפוס טיימר חוסר הפעילות.
+     * 
+     * טענת כניסה: אין.
+     * טענת יציאה: טיימר חוסר הפעילות מאופס.
+     */
     @Override
     public void onUserInteraction() {
         super.onUserInteraction();
         resetIdleTimer();
     }
+    /**
+     * נקראת כאשר ה-Activity עוברת למצב Pause.
+     * 
+     * טענת כניסה: אין.
+     * טענת יציאה: טיימר חוסר הפעילות נעצר כדי למנוע זליגת זיכרון.
+     */
     @Override
     protected void onPause() { //Prevents memory leaks
         super.onPause();
         idleHandler.removeCallbacks(idleRunnable);
     }
+    /**
+     * נקראת כאשר ה-Activity חוזרת למצב Resume.
+     * 
+     * טענת כניסה: אין.
+     * טענת יציאה: טיימר חוסר הפעילות מופעל מחדש.
+     */
     @Override
     protected void onResume() {
         super.onResume();
         startIdleTimer();
     }
 
+    /**
+     * מתחילה את טיימר חוסר הפעילות.
+     * 
+     * טענת כניסה: אין.
+     * טענת יציאה: המשימה נשלחה ל-Handler לביצוע לאחר זמן קצוב.
+     */
     private void startIdleTimer() {
         idleHandler.postDelayed(idleRunnable, IDLE_TIMEOUT);
     }
 
+    /**
+     * מאפסת את טיימר חוסר הפעילות ומתחילה אותו מחדש.
+     * 
+     * טענת כניסה: אין.
+     * טענת יציאה: המשימה הקודמת בטיימר בוטלה והחלה ספירה חדשה.
+     */
     private void resetIdleTimer() {
         idleHandler.removeCallbacks(idleRunnable);
         idleHandler.postDelayed(idleRunnable, IDLE_TIMEOUT);
     }
 
+    /**
+     * פעולה המבוצעת כאשר המשתמש לא ביצע אינטראקציה זמן רב.
+     * 
+     * טענת כניסה: אין.
+     * טענת יציאה: מוצגת הודעת Toast למשתמש.
+     */
     private void onUserIdle() {
         Toast.makeText(this, "You awake? Do something!", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * מאתרת את כל ה-TextViews המייצגים את משבצות הלוח ב-Layout.
+     * 
+     * טענת כניסה: אין.
+     * טענת יציאה: המערך cells מלא בהפניות לרכיבי ה-UI של הלוח.
+     */
     private void wordGrid() {
         for(int r = 0; r < rows; r++) {
             for(int c = 0; c < cols; c++) {
@@ -156,6 +206,12 @@ public class GameActivity extends AppCompatActivity implements GameListener {
         }
     }
 
+    /**
+     * יוצרת כפתורים עבור מקשי המקלדת הווירטואלית ומוסיפה אותם לשורה ב-UI.
+     * 
+     * טענת כניסה: אובייקט השורה (row) ומערך של תווי המקשים (keys).
+     * טענת יציאה: הכפתורים נוצרו, עוצבו והתווספו לשורה עם מאזיני לחיצה.
+     */
     private void addKeys(LinearLayout row, String[] keys) {
 
         for(int i = 0; i < keys.length; i++){
@@ -207,6 +263,12 @@ public class GameActivity extends AppCompatActivity implements GameListener {
         }
     }
 
+    /**
+     * מעבירה את הלחיצה מה-Activity ללוגיקת המשחק.
+     * 
+     * טענת כניסה: מחרוזת המייצגת את המקש שנלחץ (key).
+     * טענת יציאה: הפעולה המתאימה (הוספה, מחיקה או שליחה) בוצעה ב-GameLogic.
+     */
     private void handleKeyPress(String key) {
         if(key.equals("ENTER")){
             wordle.submitWord();
@@ -224,18 +286,36 @@ public class GameActivity extends AppCompatActivity implements GameListener {
     //          GameListener Callbacks
     // =============================================
 
+    /**
+     * מעדכנת את העיצוב הויזואלי של משבצת בלוח בעת הוספת אות.
+     * 
+     * טענת כניסה: שורה (row), עמודה (col) והאות (letter).
+     * טענת יציאה: הטקסט והרקע של המשבצת ב-UI עודכנו.
+     */
     @Override
     public void onLetterAdded(int row, int col, String letter) {
         cells[row][col].setText(letter);
         cells[row][col].setBackgroundResource(R.drawable.tile_filled);
     }
 
+    /**
+     * מנקה את הטקסט והעיצוב של משבצת בלוח בעת מחיקת אות.
+     * 
+     * טענת כניסה: שורה (row) ועמודה (col).
+     * טענת יציאה: הטקסט במשבצת נמחק והרקע הוחזר למצב ריק ב-UI.
+     */
     @Override
     public void onLetterDeleted(int row, int col) {
         cells[row][col].setText("");
         cells[row][col].setBackgroundResource(R.drawable.tile_empty);
     }
 
+    /**
+     * מעדכנת את צבע הרקע של משבצת בלוח לאחר בדיקת הניחוש ומפעילה אנימציה.
+     * 
+     * טענת כניסה: שורה (row), עמודה (col) וסוג הצבע (colorType).
+     * טענת יציאה: צבע המשבצת השתנה והופעלה אנימציית "פעימה".
+     */
     @Override
     public void onTileResult(int row, int col, int colorType) {
         TextView tile = cells[row][col];
@@ -257,6 +337,12 @@ public class GameActivity extends AppCompatActivity implements GameListener {
                 .start();
     }
 
+    /**
+     * מעדכנת את הצבע של מקש במקלדת הווירטואלית.
+     * 
+     * טענת כניסה: האות (letter) וסוג הצבע (colorType).
+     * טענת יציאה: הרקע של הכפתור המתאים במקלדת השתנה ב-UI.
+     */
     @Override
     public void onKeyColorUpdate(char letter, int colorType) {
         int drawableRes = mapColorDrawable(colorType);
@@ -273,18 +359,36 @@ public class GameActivity extends AppCompatActivity implements GameListener {
         }
     }
 
+    /**
+     * מציגה הודעת ניצחון ודיאלוג סיום משחק.
+     * 
+     * טענת כניסה: אין.
+     * טענת יציאה: מוצג Toast "Splendid!" ודיאלוג עם אפשרויות ניווט.
+     */
     @Override
     public void onGameWon() {
         Toast.makeText(this, "Splendid!", Toast.LENGTH_SHORT).show();
         showGameOverDialog();
     }
 
+    /**
+     * מציגה הודעת הפסד, חושפת את המילה ופותחת דיאלוג סיום משחק.
+     * 
+     * טענת כניסה: המילה הסודית (secretWord).
+     * טענת יציאה: מוצג Toast עם המילה הסודית ודיאלוג אפשרויות.
+     */
     @Override
     public void onGameLost(String secretWord) {
         Toast.makeText(this, "Game Over! The word was: " + secretWord, Toast.LENGTH_LONG).show();
         showGameOverDialog();
     }
 
+    /**
+     * מציגה הודעה למשתמש כאשר המטרה שהזין אינה תקינה.
+     * 
+     * טענת כניסה: אין.
+     * טענת יציאה: מוצג Toast המודיע כי המילה אינה ברשימה.
+     */
     @Override
     public void onInvalidWord() {
         Toast.makeText(this, "Not in word list", Toast.LENGTH_SHORT).show();
@@ -295,6 +399,12 @@ public class GameActivity extends AppCompatActivity implements GameListener {
     // =============================================
 
     /** Maps a GameLogic color constant to a drawable resource ID */
+    /**
+     * ממפה קבועי לוגיקה למשאבי drawable של עיצוב (צבעים).
+     * 
+     * טענת כניסה: סוג הצבע (colorType).
+     * טענת יציאה: מזהה משאב ה-Drawable המתאים (Resource ID).
+     */
     private int mapColorDrawable(int colorType) {
         switch (colorType) {
             case GameLogic.COLOR_GREEN:  return R.drawable.tile_green;
@@ -305,6 +415,12 @@ public class GameActivity extends AppCompatActivity implements GameListener {
     }
 
     /** Shows the end-of-game dialog with options to view stats or go home */
+    /**
+     * בונה ומציגה דיאלוג סיום משחק עם אפשרויות ניווט.
+     * 
+     * טענת כניסה: אין.
+     * טענת יציאה: הדיאלוג מוצג למשתמש על המסך.
+     */
     private void showGameOverDialog() {
         idleHandler.removeCallbacks(idleRunnable);
 

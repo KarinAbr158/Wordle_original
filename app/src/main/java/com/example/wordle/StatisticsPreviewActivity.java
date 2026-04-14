@@ -29,6 +29,13 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
     String username, apiKey;
 
     private Client client;
+    /**
+     * פעולה הנקראת בעת יצירת ה-Activity. מאתחלת את ה-UI, טוענת את המידע
+     * הסטטיסטי מבסיס הנתונים (Room) ומחשבת את אחוזי הניצחון עבור המשתמש הנוכחי.
+     * 
+     * טענת כניסה: מצב שמור של האפליקציה (savedInstanceState).
+     * טענת יציאה: נתוני המשתמש מוצגים על המסך וה-UI מאותחל כולל מאזיני לחיצה.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +115,12 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
             }
         });
     }
+    /**
+     * פונה ל-Gemini API בשרשור נפרד כדי לקבל עובדה מעניינת על Wordle.
+     * 
+     * טענת כניסה: אין.
+     * טענת יציאה: נשלחת בקשה ל-API, והתוצאה (עובדה או שגיאה) מוצגת ב-TextView המתאים בשרשור ה-UI.
+     */
     private void sendToGemini() {
 
         final String prompt = "Give exactly one short interesting fact about Wordle.";

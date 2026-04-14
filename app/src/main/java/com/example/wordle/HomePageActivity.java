@@ -19,6 +19,13 @@ public class HomePageActivity extends AppCompatActivity {
 
     Button startGame, settings, exit;
     Intent intent;
+    /**
+     * פעולה הנקראת בעת יצירת ה-Activity. מאתחלת את כפתורי התפריט,
+     * בודקת את מצב המשחק (רגיל/יומי) ומגדירה את אירועי המעבר למסכים השונים.
+     * 
+     * טענת כניסה: מצב שמור של האפליקציה (savedInstanceState).
+     * טענת יציאה: המסך מוכן, והכפתורים מקושרים לפעולות הניווט והגדרת מצבי המשחק.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
