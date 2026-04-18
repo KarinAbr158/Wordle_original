@@ -19,7 +19,12 @@ import com.google.genai.types.GenerateContentResponse;
 public class StatisticsPreviewActivity extends AppCompatActivity {
     private static final String TAG = "GeminiGeneration";
 
-    TextView currStreak, maxStreak, gamesPlayed, totalWins, winPercentage, funFact;
+    TextView currStreak,
+            maxStreak,
+            gamesPlayed,
+            totalWins,
+            winPercentage,
+            funFact;
     Button backToHomeBtn;
     GuessDatabase database;
     GuessDAO guessDAO;
@@ -29,13 +34,7 @@ public class StatisticsPreviewActivity extends AppCompatActivity {
     String username, apiKey;
 
     private Client client;
-    /**
-     * פעולה הנקראת בעת יצירת ה-Activity. מאתחלת את ה-UI, טוענת את המידע
-     * הסטטיסטי מבסיס הנתונים (Room) ומחשבת את אחוזי הניצחון עבור המשתמש הנוכחי.
-     * 
-     * טענת כניסה: מצב שמור של האפליקציה (savedInstanceState).
-     * טענת יציאה: נתוני המשתמש מוצגים על המסך וה-UI מאותחל כולל מאזיני לחיצה.
-     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

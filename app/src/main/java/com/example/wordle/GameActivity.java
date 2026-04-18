@@ -50,13 +50,6 @@ public class GameActivity extends AppCompatActivity implements GameListener {
     boolean shouldReset;
     AlertDialog.Builder builder;
 
-    /**
-     * פעולה הנקראת בעת יצירת ה-Activity. מאתחלת את ממשק המשתמש, הטיימרים,
-     * טוענת נתונים מה-SharedPreferences ומגדירה את לוגיקת המילים.
-     * 
-     * טענת כניסה: מצב שמור של האפליקציה (savedInstanceState).
-     * טענת יציאה: המסך מוכן למשחק, הלוגיקה והמקלדת מאותחלות.
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

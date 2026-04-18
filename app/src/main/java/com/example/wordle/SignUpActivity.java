@@ -15,13 +15,7 @@ public class SignUpActivity extends AppCompatActivity {
     EditText newUsername, newPassword, passwordConf;
     Button signupBtn;
     SharedPreferences prefs;
-    /**
-     * פעולה הנקראת בעת יצירת ה-Activity. מאתחלת את שדות ההרשמה,
-     * ומגדירה את לוגיקת שמירת המשתמש החדש ב-SharedPreferences לאחר בדיקות תקינות.
-     * 
-     * טענת כניסה: מצב שמור של האפליקציה (savedInstanceState).
-     * טענת יציאה: רכיבי ה-UI מוכנים, ומאזין הלחיצה מאמת את הנתונים ושומר משתמש חדש במידת הצורך.
-     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
