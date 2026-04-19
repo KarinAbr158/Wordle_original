@@ -322,11 +322,15 @@ public class GameActivity extends AppCompatActivity implements GameListener {
                 .scaleX(1.2f)
                 .scaleY(1.2f)
                 .setDuration(150)
-                .withEndAction(() -> tile.animate()
-                        .scaleX(1f)
-                        .scaleY(1f)
-                        .setDuration(100)
-                )
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        tile.animate()
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setDuration(100);
+                    }
+                })
                 .start();
     }
 
